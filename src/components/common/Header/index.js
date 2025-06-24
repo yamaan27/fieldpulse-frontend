@@ -141,7 +141,7 @@ export default function Header() {
   const sidebarRef = useRef(null);
 
   const handleLogMeet = () => {
-    navigate("/meeting_log/add_meeting/form");
+    navigate("/tasks/form");
   };
 
   const toggleSidebar = () => {

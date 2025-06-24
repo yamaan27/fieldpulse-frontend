@@ -17,6 +17,12 @@ const UserManagementForm = lazy(
 const UserManagementDetailPage = lazy(
   () => import("../pages/admin/UserManagement/UserDetailsPage")
 );
+const MeetingLogPage = lazy(
+  () => import("../pages/admin/MeetingLog/MeetingLogPage")
+);
+const AddMeetingPage = lazy(
+  () => import("../pages/admin/MeetingLog/AddMeetingPage")
+);
 
 const protectedRoutes = [
   {
@@ -35,6 +41,40 @@ const protectedRoutes = [
           </Suspense>
         ),
       },
+    ],
+  },
+  {
+    path: "/tasks",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DashboardLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <MeetingLogPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "form",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <AddMeetingPage />
+          </Suspense>
+        ),
+      },
+      // {
+      //   path: "add_meeting/details/:id",
+      //   element: (
+      //     <Suspense fallback={<div>Loading...</div>}>
+      //       <MeetingDetailPage />
+      //     </Suspense>
+      //   ),
+      // },
     ],
   },
   {

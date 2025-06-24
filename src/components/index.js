@@ -4,4 +4,6 @@ export {
   UserManagement,
   UserManagementForm,
   UserManagementDetails,
+  MeetingLog,
+  AddMeeting,
 } from "./admin";

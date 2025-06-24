@@ -1,27 +1,52 @@
-import PropTypes from 'prop-types'
-import Select, { components } from 'react-select'
-import React, { useState } from 'react'
-import Icon from 'services/icon'
-import { Box, Typography } from '@mui/material'
-import styled from 'styled-components'
-import { connect } from 'react-redux'
+import PropTypes from "prop-types";
+import Select, { components } from "react-select";
+import React, { useState } from "react";
+import Icon from "services/icon";
+import { Box, Typography } from "@mui/material";
+import styled from "styled-components";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-const { ValueContainer, Placeholder } = components
+const { ValueContainer, Placeholder } = components;
+
+// const CustomValueContainer = ({ children, ...props }) => {
+//   return (
+//     <ValueContainer {...props}>
+//       <Placeholder {...props} isFocused={props.isFocused}>
+//         {props.selectProps.placeholder}
+//       </Placeholder>
+//       {React.Children.map(children, (child) =>
+//         child && child.type !== Placeholder ? child : null
+//       )}
+//     </ValueContainer>
+//   )
+// }
 
 const CustomValueContainer = ({ children, ...props }) => {
+  // Check if the input has value or is focused to control placeholder visibility
+  const hasInputValue =
+    props.selectProps.inputValue || props.hasValue || props.isFocused;
+
   return (
     <ValueContainer {...props}>
-      <Placeholder {...props} isFocused={props.isFocused}>
-        {props.selectProps.placeholder}
-      </Placeholder>
+      {!hasInputValue && (
+        <Placeholder {...props}>{props.selectProps.placeholder}</Placeholder>
+      )}
       {React.Children.map(children, (child) =>
         child && child.type !== Placeholder ? child : null
       )}
     </ValueContainer>
-  )
-}
+  );
+};
 
-const IconWrapper = styled(Typography).attrs({ variant: 'caption' })`
+const CustomDropdownIndicator = (props) => {
+  return (
+    <components.DropdownIndicator {...props}>
+      <ArrowDropDownIcon sx={{ color: "black" }} />
+    </components.DropdownIndicator>
+  );
+};
+
+const IconWrapper = styled(Typography).attrs({ variant: "caption" })`
   position: absolute;
   top: 50%;
   right: 46px;
@@ -29,28 +54,68 @@ const IconWrapper = styled(Typography).attrs({ variant: 'caption' })`
   z-index: 9;
   display: flex;
   align-items: center;
-`
+`;
 
-const NormalSelectComp = ({
+export const NormalSelect = ({
   options = [],
   placeholder,
   value,
   handleChange,
   error,
-  isLocation,
-  isRestrictLocation,
+  // isLocation,
   disabled,
-  isCustomStyle,
+  // isCustomStyle,
   handleInputChange,
   isCustomMenuHeight,
   isHeight,
-  locationRestrict,
+  isMulti,
   setMenuOpenState,
-  noBackground,
   ...props
 }) => {
-  const [isDropdownFocused, setIsDropdownFocused] = useState(false)
-  const matchedValue = options.find((opt) => opt.value === value);
+  const [isDropdownFocused, setIsDropdownFocused] = useState(false);
+
+
+  const isValidValue = (val) => {
+    if (!val) return false;
+    if (typeof val === "string") {
+      const trimmed = val.trim().toLowerCase();
+      return (
+        trimmed !== "" &&
+        trimmed !== "undefined" &&
+        trimmed !== "undefined, undefined" &&
+        trimmed !== "undefined, undefined, undefined, undefined" &&
+        trimmed !== "null"
+      );
+    }
+    if (typeof val === "object") {
+      return !!(val.label || val.value);
+    }
+    return false;
+  };
+  
+  let resolvedValue;
+
+  if (isMulti) {
+    resolvedValue = [];
+  } else if (!options || options.length === 0) {
+    if (isValidValue(value)) {
+      resolvedValue =
+        typeof value === "string"
+          ? { label: value, value }
+          : { label: value.label || value.value || "", value };
+    } else {
+      resolvedValue = null; // show placeholder
+    }
+  } else {
+    resolvedValue =
+      options.find(
+        (option) => option.value === value || option.label === value
+      ) || null;
+  }
+  
+  
+
+
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -81,32 +146,65 @@ const NormalSelectComp = ({
           setMenuOpenState(false);
         }}
         onInputChange={handleInputChange}
-        isDisabled={disabled || (isRestrictLocation && locationRestrict === 0)}
+        isDisabled={disabled}
+        // value={options.find((option) => option.value === value)}
+        isMulti={isMulti}
+        // value={isMulti ? [] : options.find((option) => option.value === value)}
         // value={
-        //   value?.length > 0
-        //     ? value
-        //     : isLocation
-        //       ? [{ label: 'All', value: 'all' }]
-        //       : []
+        //   isMulti
+        //     ? []
+        //     : options.find(
+        //         (option) => option.value === value || option.label === value
+        //       ) || null
         // }
+        value={resolvedValue}
         // value={
-        //   options.find((opt) => opt.value === value) ||
-        //   (isLocation ? { label: "All", value: "all" } : null)
+        //   isMulti
+        //     ? []
+        //     : options.find((option) => {
+        //         const optVal = option.value;
+        //         const val = value;
+
+        //         console.log("[Matching]", optVal, "vs", val);
+
+        //         return (
+        //           (optVal?.city === val?.city &&
+        //             optVal?.pincode === val?.pincode) ||
+        //           optVal === val ||
+        //           option.label === val
+        //         );
+        //       }) || {
+        //         label:
+        //           typeof value === "string"
+        //             ? value
+        //             : `${value?.city || ""}${value?.city ? ", " : ""}${value?.country || ""} ${value?.pincode || ""}`,
+        //         value: value,
+        //       }
         // }
-        value={matchedValue}
         {...props}
         error={error}
         options={options}
         components={{
           ValueContainer: CustomValueContainer,
+          IndicatorSeparator: () => null,
+          DropdownIndicator: CustomDropdownIndicator,
         }}
         placeholder={placeholder}
         styles={{
-          menu: (base) => ({ ...base, zIndex: 99 }),
-          control: (provided) => ({
+          menu: (base) => ({ ...base, zIndex: 9999 }),
+          control: (provided, state) => ({
             ...provided,
             height: "48px",
             border: error && "1px solid #eb5757",
+            backgroundColor: "#e8edf1",
+            // borderColor: '#e8edf1',
+            // borderRadius: '8px',
+            borderColor: state.isFocused ? "#868686 !important" : "#e8edf1",
+            boxShadow: state.isFocused ? "0 0 0 1px hsl(0, 0%, 50%)" : "none",
+            borderRadius: "8px",
+            "&:hover": {
+              borderColor: "#868686 !important",
+            },
           }),
           container: (provided) => ({
             ...provided,
@@ -118,13 +216,8 @@ const NormalSelectComp = ({
           }),
           placeholder: (provided, state) => ({
             ...provided,
-            position: "absolute",
-            top: state.hasValue || state.selectProps.inputValue ? -17 : "",
-            transition: "top 0.1s, font-size 0.1s",
-            fontSize: isCustomStyle
-              ? 15
-              : (state.hasValue || state.selectProps.inputValue) && 13,
-            background: noBackground ? "transparent" : !disabled && "#fff",
+            visibility: state.hasValue ? "hidden" : "visible",
+            transition: "none",
           }),
           menuList: (base) => ({
             ...base,
@@ -135,43 +228,37 @@ const NormalSelectComp = ({
       />
     </Box>
   );
-}
-
-let mapStateToProps = (state) => {
-  return { locationRestrict: state.commonStore.locationRestrict }
-}
+};
 
 CustomValueContainer.propTypes = {
   children: PropTypes.node,
   isFocused: PropTypes.string,
   selectProps: PropTypes.node,
-}
+  hasValue: PropTypes.bool,
+};
 
-NormalSelectComp.propTypes = {
+NormalSelect.propTypes = {
   options: PropTypes.array,
   placeholder: PropTypes.string,
   value: PropTypes.array,
   handleChange: PropTypes.func,
   handleInputChange: PropTypes.func,
   error: PropTypes.bool,
-  isLocation: PropTypes.bool,
+  // isLocation: PropTypes.bool,
   disabled: PropTypes.bool,
-  isCustomStyle: PropTypes.bool,
+  // isCustomStyle: PropTypes.bool,
+  isMulti: PropTypes.bool,
   isCustomMenuHeight: PropTypes.bool,
   isHeight: PropTypes.string,
   locationRestrict: PropTypes.number,
-  isRestrictLocation: PropTypes.bool,
   setMenuOpenState: PropTypes.func,
-  noBackground: PropTypes.bool,
-}
-NormalSelectComp.defaultProps = {
-  error: false,
-  isLocation: false,
-  isCustomStyle: false,
-  isCustomMenuHeight: false,
-  isRestrictLocation: false,
-  setMenuOpenState: () => {},
-  noBackground: false,
-}
+};
 
-export const NormalSelect = connect(mapStateToProps, null)(NormalSelectComp)
+NormalSelect.defaultProps = {
+  error: false,
+  // isLocation: false,
+  // isCustomStyle: false,
+  isMulti: false,
+  isCustomMenuHeight: false,
+  setMenuOpenState: () => {},
+};

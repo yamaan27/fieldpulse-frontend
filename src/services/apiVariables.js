@@ -17,3 +17,10 @@ export const authApi = {
     baseURL: "auth",
   },
 };
+export const dropDownApi = {
+  getAgents: {
+    api: "api/users/agents",
+    method: "get",
+    baseURL: "auth",
+  },
+};
