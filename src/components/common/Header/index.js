@@ -83,7 +83,7 @@ const LogoWrapper = styled("div")({
 });
 
 const LogMeetingButton = styled("button")({
-  backgroundColor: "#006ADA",
+  backgroundColor: "#324559",
   color: "white",
   fontSize: "16px",
   fontWeight: 600,

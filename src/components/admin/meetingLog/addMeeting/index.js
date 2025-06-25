@@ -30,7 +30,7 @@ import { getUserEmail } from 'utils/authUtils'
 
 import { MeetingInformation } from '../meetingInformation'
 
-import { addMeetingApi } from 'action/MeetingLog/MeetingLogAct'
+import { addTaskApi } from 'action/MeetingLog/MeetingLogAct'
 
 const BoxWrapper = styled(Box)`
   border-radius: 24px;
@@ -166,14 +166,15 @@ const AddMeetingComp = (props) => {
     if (userEmail) {
       body.email = userEmail
     }
-
+    let query = {
+    };
     
 
     props
-      .addMeetingApi( body)
+      .addTaskApi( query, body)
       .then(({ message }) => {
         successToast(message)
-        navigate('/meeting_log')
+        navigate('/tasks')
         setIsLoading(false)
       })
       .catch(({ message }) => {
@@ -268,7 +269,7 @@ const AddMeetingComp = (props) => {
               type="submit"
               variant="outlined"
               endIcon={<CloseIcon style={{ color: "#006ADA" }} />}
-              onClick={() => navigate("/meeting_log")}
+              onClick={() => navigate("/tasks")}
             >
               Cancel
             </StyledButtonWhite>
@@ -316,11 +317,11 @@ const AddMeetingComp = (props) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ addMeetingApi }, dispatch)
+  return bindActionCreators({ addTaskApi }, dispatch)
 }
 
 AddMeetingComp.propTypes = {
-  addMeetingApi: PropTypes.func.isRequired,
+  addTaskApi: PropTypes.func.isRequired,
 }
 
 AddMeetingComp.defaultProps = {}

@@ -90,7 +90,7 @@ const SidebarContainer = styled.div`
               color: white;
             `
           : css`
-              color: #006ada;
+              color: #324559;
             `}
     }
 
@@ -99,14 +99,14 @@ const SidebarContainer = styled.div`
     }
 
     &.ps-active {
-      background-color: #006ada !important;
+      background-color: #324559 !important;
       color: #ffffff !important;
       font-weight: 700 !important;
       position: relative;
 
       .ps-menu-button {
         &:hover {
-          background-color: #006ada !important;
+          background-color: #324559 !important;
         }
       }
 
@@ -115,7 +115,7 @@ const SidebarContainer = styled.div`
         font-weight: 700 !important;
       }
       &:before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         right: 10px;
@@ -168,19 +168,19 @@ const SidebarContainer = styled.div`
 
   @media (max-width: 768px) {
     position: fixed;
-    width: ${(props) => (props.isSidebarOpen ? '100%' : '0')};
-    height: ${(props) => (props.isSidebarOpen ? '100%' : '0')};
+    width: ${(props) => (props.isSidebarOpen ? "100%" : "0")};
+    height: ${(props) => (props.isSidebarOpen ? "100%" : "0")};
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
     z-index: 1200 !important;
-    display: ${(props) => (props.isSidebarOpen ? 'block' : 'none')};
+    display: ${(props) => (props.isSidebarOpen ? "block" : "none")};
     top: 0;
     left: 0;
     transform: ${(props) =>
-      props.isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)'};
+      props.isSidebarOpen ? "translateX(0)" : "translateX(-100%)"};
     transition: transform 0.3s ease-in-out;
   }
-`
+`;
 const LogoWrapper = styled('div')({
   textAlign: 'center',
   padding: '20px 0px',
@@ -345,7 +345,7 @@ function SidebarMenuComp({
             </>
             {/* )} */}
           </div>
-          {!isSmallScreen && (
+          {/* {!isSmallScreen && (
             <Menu>
               <MenuItem
                 icon={
@@ -364,7 +364,7 @@ function SidebarMenuComp({
                 Logout
               </MenuItem>
             </Menu>
-          )}
+          )} */}
         </Sidebar>
       </SidebarContainer>
     </>

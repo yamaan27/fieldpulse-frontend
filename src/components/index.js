@@ -6,4 +6,7 @@ export {
   UserManagementDetails,
   MeetingLog,
   AddMeeting,
+  MeetingDetail,
+  ProjectInsights,
+  LiveMap,
 } from "./admin";

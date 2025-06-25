@@ -5,3 +5,6 @@ export { UserManagementForm } from "./userManagementForm";
 export { UserManagementDetails } from "./userManagementDetails";
 export { MeetingLog } from "./meetingLog/index";
 export { AddMeeting } from "./meetingLog/addMeeting";
+export { MeetingDetail } from "./meetingLog/meetingDetail";
+export { ProjectInsights } from "./ProjectInsights";
+export { LiveMap } from "./liveMap";

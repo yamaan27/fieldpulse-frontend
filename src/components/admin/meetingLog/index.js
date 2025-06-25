@@ -10,27 +10,27 @@ import AddchartIcon from '@mui/icons-material/Addchart'
 import TitleWrapper from 'components/common/TitleWrapper'
 import { MeetTable } from './meetTable'
 
-const LogMeetingButton = styled('button')({
-  backgroundColor: '#006ADA',
-  color: 'white',
-  fontSize: '16px',
+const LogMeetingButton = styled("button")({
+  backgroundColor: "#324559",
+  color: "white",
+  fontSize: "16px",
   fontWeight: 600,
-  lineHeight: '20px',
-  border: 'none',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  display: 'flex',
-  alignItems: 'center',
-  cursor: 'pointer',
-  '&:hover': {
-    backgroundColor: '#005bb5',
+  lineHeight: "20px",
+  border: "none",
+  padding: "8px 16px",
+  borderRadius: "8px",
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  "&:hover": {
+    backgroundColor: "#005bb5",
   },
-  '& .MuiSvgIcon-root': {
-    marginRight: '8px',
-    color: 'white',
-    fill: 'white',
+  "& .MuiSvgIcon-root": {
+    marginRight: "8px",
+    color: "white",
+    fill: "white",
   },
-})
+});
 
 const BoxWrapper = styled(Box)`
   border-radius: 24px;

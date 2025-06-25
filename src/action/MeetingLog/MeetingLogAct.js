@@ -1,14 +1,14 @@
-import { meetingLogApiVariables } from 'services/apiVariable/meetingLogApiVariables'
+import { taskApiVariables } from 'services/apiVariable/taskApiVariables'
 import { addQuery } from 'services/helperFunctions'
 import { toast } from 'react-toastify'
 
 export const getAllMeetingsApi =
   (query) =>
   (dispatch, getState, { api }) => {
-    addQuery(query, meetingLogApiVariables.getAllMeetings)
+    addQuery(query, taskApiVariables.getAllMeetings)
     return new Promise((resolve, reject) => {
       api({
-        ...meetingLogApiVariables.getAllMeetings,
+        ...taskApiVariables.getAllMeetings,
       })
         .then((data ) => {
           resolve(data)
@@ -19,34 +19,39 @@ export const getAllMeetingsApi =
     })
   }
 
-export const addMeetingApi =
-  (query, body) =>
-  (dispatch, getState, { api }) => {
-    addQuery(query, meetingLogApiVariables.addMeetingUrl)
+  export const addTaskApi =
+    (query, body) =>
+    (dispatch, getState, { api }) => {
+      addQuery(query, taskApiVariables.addTaskUrl);
 
-    return new Promise((resolve, reject) => {
-      api({
-        ...meetingLogApiVariables.addMeetingUrl,
-        body,
-      })
-        .then(({ data, message }) => {
-          resolve(data)
-          toast.success(message)
+
+      return new Promise((resolve, reject) => {
+        api({
+          ...taskApiVariables.addTaskUrl,
+          body,
         })
-        .catch(({ message }) => {
-          reject(toast.error(message))
-        })
-    })
-  }
+          .then((data, message ) => {
+            resolve(data);
+            toast.success(data.message);
+          })
+          .catch((error) => {
+            console.error("[addTaskApi] API error:", error);
+            const errMsg = error?.message || "Something went wrong";
+            reject(errMsg);
+            toast.error(errMsg);
+          });
+      });
+    };
+
 export const getMeetingbyidApi =
   (query) =>
   (dispatch, getState, { api }) => {
-    meetingLogApiVariables.getMeetingbyidUrl.id = query.id
+    taskApiVariables.getMeetingbyidUrl.id = query.id
     return new Promise((resolve, reject) => {
       api({
-        ...meetingLogApiVariables.getMeetingbyidUrl,
+        ...taskApiVariables.getMeetingbyidUrl,
       })
-        .then(({ data }) => {
+        .then((data ) => {
           resolve(data)
         })
         .catch(({ message }) => {
@@ -58,10 +63,10 @@ export const getMeetingbyidApi =
 export const getStakeholdersApi =
   (query) =>
   (dispatch, getState, { api }) => {
-    meetingLogApiVariables.getStakeholdersUrl.id = query.id
+    taskApiVariables.getStakeholdersUrl.id = query.id
     return new Promise((resolve, reject) => {
       api({
-        ...meetingLogApiVariables.getStakeholdersUrl,
+        ...taskApiVariables.getStakeholdersUrl,
       })
         .then(({ data }) => {
           resolve(data)
@@ -77,7 +82,7 @@ export const getMeetingClientbyidApi =
   (dispatch, getState, { api }) => {
     return new Promise((resolve) => {
       api({
-        ...meetingLogApiVariables.getMeetingClientIdUrl,
+        ...taskApiVariables.getMeetingClientIdUrl,
         body,
       })
         .then(({ data }) => {
@@ -95,7 +100,7 @@ export const isStakeholderExistsApi =
   (dispatch, getState, { api }) => {
     return new Promise((resolve, reject) => {
       api({
-        ...meetingLogApiVariables.isStakeholderExistsUrl,
+        ...taskApiVariables.isStakeholderExistsUrl,
         body,
       })
         .then(({ data, message }) => {
@@ -115,7 +120,7 @@ export const uploadImg =
   (dispatch, getState, { api, Toast }) => {
     return new Promise((resolve, reject) => {
       api({
-        ...meetingLogApiVariables.upload,
+        ...taskApiVariables.upload,
         body,
       })
         .then((data) => {
@@ -130,10 +135,10 @@ export const uploadImg =
 export const editMeetingApi =
   (query, body) =>
   (dispatch, getState, { api }) => {
-    addQuery(query, meetingLogApiVariables.editMeeting)
+    addQuery(query, taskApiVariables.editMeeting)
     return new Promise((resolve, reject) => {
       api({
-        ...meetingLogApiVariables.editMeeting,
+        ...taskApiVariables.editMeeting,
         body,
       })
         .then(({ data, message }) => {

@@ -5,6 +5,9 @@ import DashboardLayout from '../layouts/DashboardLayout'
 const DashboardPage = lazy(
   () => import('../pages/admin/dashboard/DashboardPage')
 )
+const LiveMapPage = lazy(() => import("../pages/admin/liveMap/liveMapPage"));
+// const LiveMapPage = lazy(() => import("../pages/admin/liveMap/LiveMapPage"));
+
 const AccountMasterPage = lazy(
   () => import("../pages/admin/Account/AccountMasterPage")
 );
@@ -23,6 +26,12 @@ const MeetingLogPage = lazy(
 const AddMeetingPage = lazy(
   () => import("../pages/admin/MeetingLog/AddMeetingPage")
 );
+const MeetingDetailPage = lazy(
+  () => import("../pages/admin/MeetingLog/MeetingDetail")
+);
+const ProjectInsightsPage = lazy(
+  () => import("../pages/admin/ProjectInsights/ProjectInsightsPage")
+);
 
 const protectedRoutes = [
   {
@@ -38,6 +47,24 @@ const protectedRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <DashboardPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/map",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DashboardLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <LiveMapPage />
           </Suspense>
         ),
       },
@@ -67,14 +94,14 @@ const protectedRoutes = [
           </Suspense>
         ),
       },
-      // {
-      //   path: "add_meeting/details/:id",
-      //   element: (
-      //     <Suspense fallback={<div>Loading...</div>}>
-      //       <MeetingDetailPage />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "details/:id",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <MeetingDetailPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -101,6 +128,24 @@ const protectedRoutes = [
       //     </Suspense>
       //   ),
       // },
+    ],
+  },
+  {
+    path: "/report",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DashboardLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProjectInsightsPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {

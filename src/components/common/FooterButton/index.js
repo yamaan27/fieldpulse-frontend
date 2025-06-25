@@ -23,27 +23,27 @@ const FixedButtonWrapper = styled(Box)`
   }
 `
 
-const FooterButtonStyled = styled('button')({
-  backgroundColor: '#006ADA',
-  color: 'white',
-  fontSize: '16px',
+const FooterButtonStyled = styled("button")({
+  backgroundColor: "#324559",
+  color: "white",
+  fontSize: "16px",
   fontWeight: 600,
-  lineHeight: '20px',
-  border: 'none',
-  padding: '8px 16px',
-  borderRadius: '8px',
-  display: 'flex',
-  alignItems: 'center',
-  cursor: 'pointer',
-  '&:hover': {
-    backgroundColor: '#005bb5',
+  lineHeight: "20px",
+  border: "none",
+  padding: "8px 16px",
+  borderRadius: "8px",
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  "&:hover": {
+    backgroundColor: "#005bb5",
   },
-  '& .MuiSvgIcon-root': {
-    marginRight: '8px',
-    color: 'white',
-    fill: 'white',
+  "& .MuiSvgIcon-root": {
+    marginRight: "8px",
+    color: "white",
+    fill: "white",
   },
-})
+});
 
 const FooterButton = ({ icon: IconComponent, label, onClick }) => {
   return (

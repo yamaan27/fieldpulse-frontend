@@ -307,6 +307,8 @@ const MeetingInformationComp = ({
     return inputValue;
   };
 
+  console.log("Meetings Deatils ClientInfo:", ClientInfo);
+
   return (
     <Grid item xs={12} sm={12} md={12} sx={{ padding: "0 0 16px 16px" }}>
       <Grid container spacing={2}>
@@ -320,13 +322,6 @@ const MeetingInformationComp = ({
           <FormControl fullWidth>
             <CustomFormLabel>Title{isFormMode && <Asterisk />}</CustomFormLabel>
             {isFormMode && (
-              // <NormalSelect
-              //   placeholder="Select Client Name"
-              //   options={clientOptions}
-              //   name="clientName"
-              //   value={values?.clientName}
-              //   handleChange={handleClientSelectChange}
-              // />
               <StyledTextField
                 name="title"
                 placeholder="Enter the value here"
@@ -337,7 +332,7 @@ const MeetingInformationComp = ({
             )}
             {isDetailsMode && (
               <CustomTypography variant="body1">
-                {ClientInfo?.clientName}
+                {ClientInfo?.title || "N/A"}
               </CustomTypography>
             )}
             {errorMessageToDisplay(
@@ -364,7 +359,7 @@ const MeetingInformationComp = ({
                 placeholder="Select Assignee"
                 options={clientOptions}
                 name="assignedTo"
-                value={values?.assignedTo}
+                value={values?.assignedTo.name}
                 handleChange={(selectedOption) =>
                   handleSelectChange(selectedOption, "assignedTo")
                 }
@@ -372,13 +367,13 @@ const MeetingInformationComp = ({
             )}
             {isDetailsMode && !isEditMode && (
               <CustomTypography>
-                {capitalizeFirstLetter(ClientInfo?.assignedTo)}
+                {values?.assignedTo.name || "N/A"}
               </CustomTypography>
             )}
             {errorMessageToDisplay(
               validator,
               "assignedTo",
-              values?.assignedTo,
+              values?.assignedTo.name,
               "required"
             )}
           </FormControl>
@@ -391,10 +386,7 @@ const MeetingInformationComp = ({
           lg={lgValue}
         >
           <CardWrap>
-            <SubTitle>
-              Location
-              {/* {isEditMode && <Asterisk />} */}
-            </SubTitle>
+            <SubTitle>Location</SubTitle>
             {(isFormMode || isEditMode) && (
               <>
                 <NormalSelect
@@ -406,7 +398,7 @@ const MeetingInformationComp = ({
                     values?.location?.country,
                     values?.location?.pincode,
                   ]
-                    .filter(Boolean) // removes undefined, null, empty string
+                    .filter(Boolean)
                     .join(", ")}
                   options={geographyOptions}
                   isLoading={isLoading}
@@ -470,42 +462,7 @@ const MeetingInformationComp = ({
             )}
           </FormControl>
         </Grid>
-        {/* <Grid
-          item
-          xs={isEditMode || isFormMode ? 12 : 6}
-          sm={isEditMode || isFormMode ? 6 : 4}
-          md={isEditMode || isFormMode ? 6 : 4}
-          lg={lgValue}
-        >
-          <FormControl fullWidth>
-            <CustomFormLabel>
-              End Time{isFormMode && <Asterisk />}
-            </CustomFormLabel>
-            {(isFormMode || isEditMode) && (
-              <DatePicker
-                value={values?.endTime || null}
-                placeholderText="Select End Time"
-                onChange={(newValue) => handleDateChange(newValue, "endTime")}
-                disabled={false}
-                showTimeInput={true}
-                showYearPicker={false}
-                minDate={null}
-                maxDate={null}
-              />
-            )}
-            {isDetailsMode && !isEditMode && (
-              <CustomTypography variant="body1">
-                {moment(ClientInfo?.endTime).format("DD MMM YYYY")}
-              </CustomTypography>
-            )}
-            {errorMessageToDisplay(
-              validator,
-              "location",
-              values?.location,
-              "required"
-            )}
-          </FormControl>
-        </Grid> */}
+
         <Grid
           item
           xs={isEditMode || isFormMode ? 12 : 6}
@@ -529,7 +486,7 @@ const MeetingInformationComp = ({
             )}
             {isDetailsMode && !isEditMode && (
               <CustomTypography>
-                {commentsInfo?.description || "N/A"}
+                {values?.description || "N/A"}
               </CustomTypography>
             )}
             {errorMessageToDisplay(

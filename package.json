@@ -29,6 +29,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.10.1",
     "react-toastify": "^10.0.5",
+    "recharts": "^3.0.0",
     "sass": "^1.77.8",
     "schema-utils": "^2.7.1",
     "simple-react-validator": "^1.6.2",
