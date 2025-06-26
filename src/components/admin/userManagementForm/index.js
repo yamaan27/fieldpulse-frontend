@@ -417,12 +417,12 @@ const UserManagementFormComp = (props) => {
                             name="role"
                             placeholder="Select here"
                             options={roleOptions}
-                            // value={values.role}
-                            value={
-                              roleOptions.find(
-                                (opt) => opt.value === values.role
-                              ) || null
-                            }
+                            value={values.role}
+                            // value={
+                            //   roleOptions.find(
+                            //     (opt) => opt.value === values.role
+                            //   ) || null
+                            // }
                             handleChange={(selectedOption) =>
                               handleSelectChange(selectedOption, "role")
                             }

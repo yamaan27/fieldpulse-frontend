@@ -292,8 +292,7 @@ const SolutionCenterComp = ({
                   </TableRow>
                 ))}
               </TableWrapper>)}
-
-              {/* <Grid item xs={12} md={6}> */}
+              {userRole === "agent" && (
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart
                   data={formatReportData(monthlyData)}
@@ -329,6 +328,7 @@ const SolutionCenterComp = ({
                   />
                 </BarChart>
               </ResponsiveContainer>
+              )}
               {/* </Grid> */}
             </>
           )}

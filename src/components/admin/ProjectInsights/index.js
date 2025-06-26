@@ -159,6 +159,7 @@ const ProjectInsightsComp = ({  }) => {
             isLoading={countsLoaded ? false : isLoading}
           />
         </Grid>
+
       </Grid>
       {/* </Box> */}
 
