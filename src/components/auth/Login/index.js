@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -12,7 +12,7 @@ import { Formik, Form, ErrorMessage } from 'formik'
 import { loginSchema } from 'services/validation/authSchema'
 import loginCompSvg from 'assets/svg/login_comp.svg'
 import FieldPulse from "assets/svg/FieldPulse.png";
-
+import { clearUserRole, getUserData, getUserRole } from "utils/authUtils";
 import { loginApi } from 'action/AuthAct'
 
 import { NormalInput } from 'components/common/NormalInput'
@@ -274,11 +274,19 @@ const StyledErrorMessage = styled.div`
 const LoginComp = ({ loginApi }) => {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
+    const [userRole, setUserRole] = useState(null);
   const [credentials, setCredentials] = React.useState({
     email: '',
     password: '',
     rememberMe: false,
   })
+
+   useEffect(() => {
+      const role = getUserRole();
+      setUserRole(role);
+  
+      console.log("User Role Login:", role);
+    }, []);
 
   // const initialState = {
   //   email: '',
@@ -336,10 +344,22 @@ const LoginComp = ({ loginApi }) => {
       Cookies.remove("rememberedUser");
     }
     loginApi(body)
-      .then(({ message }) => {
-        console.log("✅ Login successful:", message);
-        toast.success(message);
-        navigate("/dashboard");
+      .then((data) => {
+        console.log("✅ Login successful:", data);
+        console.log("✅ Login successful user role:", data.user.role);
+        toast.success(data.message);
+        // navigate("/dashboard");
+        const userRole = data.user.role;
+
+        // 🔁 Navigate based on role
+        if (userRole === "agent") {
+          navigate("/task_list");
+        } else if (userRole === "admin") {
+          navigate("/dashboard");
+        } else {
+          // Optional: Default route or error
+          navigate("/dashboard");
+        }
         setIsLoading(false);
       })
       .catch(({ message }) => {

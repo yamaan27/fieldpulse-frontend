@@ -4,39 +4,21 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ClientCard } from "components/common/Card";
 import { differenceInDays, parseISO } from "date-fns";
-import { TableWrapper } from "components/common/TableWrapper";
-import PropTypes from "prop-types";
-import Icon from "services/icon";
-import { clearUserRole, getUserData, reverseGeocode } from "utils/authUtils";
-import { getTaskbyUseridApi } from "action/Task/TaskAct";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import {
-  Link,
-  useMediaQuery,
-  Box,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import PropTypes from "prop-types";
+
+import { getUserData, reverseGeocode } from "utils/authUtils";
+import { getTaskbyUseridApi } from "action/Task/TaskAct";
+
+import { useMediaQuery, Box, Typography } from "@mui/material";
 
 import styled from "styled-components";
-import CloseIcon from "@mui/icons-material/Close";
+
 import { color } from "services/colors";
 
 import useDebounce from "hooks/useDebounce";
 
 //STYLES
-
-const SmallText = styled(Typography)({
-  fontSize: "12px",
-});
 
 const BoxWrapper = styled(Box)`
   border-radius: 24px;
@@ -60,51 +42,6 @@ const Wrapper = styled(Box)`
   margin-top: 32px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 `;
-
-
-
-const StyledButton = styled(Button)({
-  width: "max-content",
-  backgroundColor: "#FFFFFF",
-  color: "#EB5757",
-  border: "1px solid #EB5757",
-  fontSize: "16px",
-  height: "43px",
-  borderRadius: "8px",
-  padding: "8px 48px",
-  textTransform: "none",
-  fontWeight: 600,
-  lineHeight: "20px",
-  textAlign: "left",
-  "&:hover": {
-    backgroundColor: "#f0f0f0",
-  },
-  "@media (max-width: 600px)": {
-    fontSize: "14px",
-    padding: "8px 18px",
-  },
-});
-const StyledButtonWhite = styled(Button)({
-  width: "max-content",
-  backgroundColor: "#FFFFFF",
-  color: "#EB5757",
-  border: "1px solid #EB5757",
-  fontSize: "16px",
-  height: "43px",
-  borderRadius: "8px",
-  padding: "8px 48px",
-  textTransform: "none",
-  fontWeight: 600,
-  lineHeight: "20px",
-  textAlign: "left",
-  "&:hover": {
-    backgroundColor: "#f0f0f0",
-  },
-  "@media (max-width: 600px)": {
-    fontSize: "14px",
-    padding: "8px 18px",
-  },
-});
 
 const TaskListComp = (props) => {
   const [userList, setUserList] = useState([]);
@@ -174,7 +111,6 @@ const TaskListComp = (props) => {
 
     return `${day} ${month} ${year}`;
   };
-  
 
   const capitalizeFirstLetter = (string) => {
     if (!string) return "";
@@ -205,35 +141,48 @@ const TaskListComp = (props) => {
     setIsLoading(true);
     let query = {
       id: userId,
+      filter: "pending",
     };
 
     props
-      .getTaskbyUseridApi({ id: userId })
+      // .getTaskbyUseridApi({ id: userId })
+      .getTaskbyUseridApi(query)
       .then(async (response) => {
-        const enrichedTasks = await Promise.all(
-          response.map(async (task) => {
-            const locationStr = await reverseGeocode(
-              task.location.lat,
-              task.location.lng
-            );
-            return {
-              id: task.taskId,
-              title: task.title,
-              description: task.description,
-              assignedTo: task.assignedTo?.name || "Unassigned",
-              location: locationStr, // updated here
-              status: task.status,
-              due: task.dueDate,
-              _id: task._id,
-            };
-          })
-        );
+        console.log("response getTaskbyUseridApi", response);
+        // const enrichedTasks = await Promise.all(
+        //   response.map(async (task) => {
+        //     const locationStr = await reverseGeocode(
+        //       task.location.lat,
+        //       task.location.lng
+        //     );
+        //     const formatStatus = (status) => {
+        //       if (!status) return "N/A";
+        //       return status
+        //         .split("_")
+        //         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        //         .join(" ");
+        //     };
+        //     return {
+        //       id: task.taskId,
+        //       title: task.title,
+        //       description: task.description,
+        //       assignedTo: task.assignedTo?.name || "Unassigned",
+        //       location: location, // updated here
+        //       status: formatStatus(task.status),
+        //       due: task.dueDate,
+        //       _id: task._id,
+        //     };
+        //   })
+        // );
 
-        setUserList(enrichedTasks);
+        // setUserList(enrichedTasks);
+        setUserList(response);
         setIsLoading(false);
       })
       .catch(() => setIsLoading(false));
   };
+
+  console.log("userList", userList);
 
   return (
     <>
@@ -365,24 +314,37 @@ const TaskListComp = (props) => {
               <ClientCard
                 key={index}
                 title={task.title}
-                label={formatDate(task.due)}
-                dateIn={calculateDaysDifference(task.due)}
-                onDetailClick={() => goToDetailPage(task.id)}
+                label={formatDate(task.dueDate)}
+                dateIn={calculateDaysDifference(task.dueDate)}
+                onDetailClick={() => goToDetailPage(task.taskId)}
                 meetingLog={true}
                 centerContent={true}
                 // {...console.log("task.taskId", task)}
                 details={[
                   {
                     label: "Task ID",
-                    value: capitalizeFirstLetter(task.id),
+                    value: capitalizeFirstLetter(task.taskId),
                   },
                   {
                     label: "Description",
                     value: capitalizeFirstLetter(task.description),
                   },
-                  { label: "Location", value: task.location },
+                  {
+                    label: "Location",
+                    value: task.location
+                      ? [
+                          task.location?.area, // optional
+                          task.location?.city,
+                          task.location?.state,
+                          task.location?.country,
+                          task.location?.pincode,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")
+                      : "N/A",
+                  },
                   { label: "Status", value: task.status },
-                  { label: "Due Date", value: formatDate(task?.due) },
+                  { label: "Due Date", value: formatDate(task?.dueDate) },
                 ]}
                 // customActions={
                 //   <Box
@@ -417,7 +379,7 @@ const TaskListComp = (props) => {
                 //       width="100%"
                 //       gap={2}
                 //     >
-                     
+
                 //       <StyledButton
                 //         type="submit"
                 //         variant="contained"

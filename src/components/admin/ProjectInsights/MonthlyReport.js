@@ -80,7 +80,6 @@ const MonthlyReportComp = ({
   useEffect(() => {
     monthlyReportApi().then((res) => {
       setSummaryData(res);
-      console.log("monthlyReportApi monthlyReportApi:", res);
     });
   }, []);
   const chartData = summaryData

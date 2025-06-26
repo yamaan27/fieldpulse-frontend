@@ -4,39 +4,19 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ClientCard } from "components/common/Card";
 import { differenceInDays, parseISO } from "date-fns";
-import { TableWrapper } from "components/common/TableWrapper";
 import PropTypes from "prop-types";
-import Icon from "services/icon";
-import { clearUserRole, getUserData, reverseGeocode } from "utils/authUtils";
+import { getUserData, reverseGeocode } from "utils/authUtils";
 import { getTaskbyUseridApi } from "action/Task/TaskAct";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import {
-  Link,
-  useMediaQuery,
-  Box,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { useMediaQuery, Box, Typography } from "@mui/material";
 
 import styled from "styled-components";
-import CloseIcon from "@mui/icons-material/Close";
+
 import { color } from "services/colors";
 
 import useDebounce from "hooks/useDebounce";
 
 //STYLES
-
-const SmallText = styled(Typography)({
-  fontSize: "12px",
-});
 
 const BoxWrapper = styled(Box)`
   border-radius: 24px;
@@ -61,69 +41,11 @@ const Wrapper = styled(Box)`
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
-
-
-const StyledButton = styled(Button)({
-  width: "max-content",
-  backgroundColor: "#FFFFFF",
-  color: "#324559",
-  border: "1px solid #324559",
-  fontSize: "16px",
-  height: "43px",
-  borderRadius: "8px",
-  padding: "8px 48px",
-  textTransform: "none",
-  fontWeight: 600,
-  lineHeight: "20px",
-  textAlign: "left",
-  "&:hover": {
-    backgroundColor: "#f0f0f0",
-  },
-  "@media (max-width: 600px)": {
-    fontSize: "14px",
-    padding: "8px 18px",
-  },
-});
-const StyledButtonWhite = styled(Button)({
-  width: "max-content",
-  backgroundColor: "#FFFFFF",
-  color: "#324559",
-  border: "1px solid #324559",
-  fontSize: "16px",
-  height: "43px",
-  borderRadius: "8px",
-  padding: "8px 48px",
-  textTransform: "none",
-  fontWeight: 600,
-  lineHeight: "20px",
-  textAlign: "left",
-  "&:hover": {
-    backgroundColor: "#f0f0f0",
-  },
-  "@media (max-width: 600px)": {
-    fontSize: "14px",
-    padding: "8px 18px",
-  },
-});
-
-const OngoingTaskComp = (props) => {
+const CompletedTaskComp = (props) => {
   const [userList, setUserList] = useState([]);
 
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("id");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const taskHeader = [
-    { id: "id", label: "Task ID", sort: true },
-    { id: "title", label: "Title", sort: true },
-    { id: "assignedTo", label: "Assigned To", sort: false },
-    { id: "location", label: "Location", sort: false },
-    { id: "status", label: "Status", sort: true },
-    { id: "due", label: "Due Date", sort: true },
-  ];
   const isSmallScreen = useMediaQuery("(max-width:700px)");
 
   const navigate = useNavigate();
@@ -174,7 +96,6 @@ const OngoingTaskComp = (props) => {
 
     return `${day} ${month} ${year}`;
   };
-  
 
   const capitalizeFirstLetter = (string) => {
     if (!string) return "";
@@ -207,22 +128,21 @@ const OngoingTaskComp = (props) => {
     //   id: userId,
     // };
     let query = {
-      id: userId ,
-      filter: "in_progress",
+      id: userId,
+      filter: "completed",
     };
 
     props
       // .getTaskbyUseridApi({ id: userId })
       .getTaskbyUseridApi(query)
       .then(async (response) => {
+        console.log("getTaskbyUseridApi response", response);
         const enrichedTasks = await Promise.all(
           response.map(async (task) => {
             const locationStr = await reverseGeocode(
               task.location.lat,
               task.location.lng
             );
-
-            console.log("task.status", task.status);
             const formatStatus = (status) => {
               if (!status) return "N/A";
               return status
@@ -237,6 +157,7 @@ const OngoingTaskComp = (props) => {
               assignedTo: task.assignedTo?.name || "Unassigned",
               location: locationStr, // updated here
               status: formatStatus(task.status),
+              note: task?.proof?.notes || "No note provided",
               due: task.dueDate,
               _id: task._id,
             };
@@ -254,108 +175,9 @@ const OngoingTaskComp = (props) => {
       <BoxWrapper isSmallScreen={isSmallScreen}>
         <Wrapper>
           <Typography variant="h6" fontWeight="bold" gutterBottom>
-            Ongoing Tasks
+            Completed Tasks
           </Typography>
 
-          {/* <TableWrapper
-            userList={userList}
-            headerDetails={taskHeader}
-            order={order}
-            orderBy={orderBy}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            count={userList.length}
-            setOrder={setOrder}
-            setOrderBy={setOrderBy}
-            setPage={setPage}
-            setRowsPerPage={setRowsPerPage}
-            setUserList={setUserList}
-            loading={loading}
-            colSpan={6}
-            customFontSize
-            customSpace
-          >
-            {userList.map((task, index) => (
-              <TableRow key={index}>
-                <TableCell>{task.id}</TableCell>
-                <TableCell>{task.title}</TableCell>
-                <TableCell>{task.assignedTo}</TableCell>
-                <TableCell>{task.location}</TableCell>
-                <TableCell>
-                  <Typography
-                    sx={{
-                      color:
-                        task.status === "Completed"
-                          ? "green"
-                          : task.status === "Pending"
-                            ? "orange"
-                            : "gray",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {task.status}
-                  </Typography>
-                </TableCell>
-                <TableCell>{task.due}</TableCell>
-              </TableRow>
-            ))}
-          </TableWrapper> */}
-
-          {/* {userList.length === 0 ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-            >
-              <Typography variant="h6">No Data Found</Typography>
-            </Box>
-          ) : (
-            userList.map((task, index) => (
-              <ClientCard
-                key={index}
-                subtitleIcon={false}
-                meetingLog={true}
-                title={task.title}
-                label={formatDate(task.due)}
-                dateIn={calculateDaysDifference(task.due)}
-                onDetailClick={() => goToDetailPage(task._id)}
-                details={[
-                  {
-                    label: "Title",
-                    value: capitalizeFirstLetter(task.title),
-                    // style: { minWidth: '160px' },
-                  },
-                  {
-                    label: "Description",
-                    value: capitalizeFirstLetter(task.title),
-                    // style: { minWidth: '160px' },
-                  },
-                  {
-                    label: "Location",
-                    value: task.location,
-                    // style: { minWidth: '160px' },
-                  },
-
-                  {
-                    label: "Status",
-                    value: task.status,
-                    // style: { minWidth: '130px' },
-                  },
-                  {
-                    label: "Due Date",
-                    value: task.due,
-                    // style: { minWidth: '130px' },
-                  },
-                  // {
-                  //   label: "Movement",
-                  //   value: renderBoxWrap(pulseData),
-                  //   // style: { minWidth: '130px' },
-                  // },
-                ]}
-              />
-            ))
-          )} */}
           {isLoading ? (
             <Box
               display="flex"
@@ -397,27 +219,8 @@ const OngoingTaskComp = (props) => {
                   { label: "Location", value: task.location },
                   { label: "Status", value: task.status },
                   { label: "Due Date", value: formatDate(task?.due) },
+                  { label: "Proof Note", value: task?.note },
                 ]}
-                customActions={
-                  <Box
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="center"
-                    alignItems="center"
-                    width="100%"
-                    gap={2}
-                  >
-                    <StyledButton
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      endIcon={<ArrowForwardIcon />}
-                      onClick={() => goToDetailPage(task.id)}
-                    >
-                      Complete Task
-                    </StyledButton>
-                  </Box>
-                }
               />
             ))
           )}
@@ -431,8 +234,11 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ getTaskbyUseridApi }, dispatch);
 };
 
-OngoingTaskComp.propTypes = { getTaskbyUseridApi: PropTypes.func.isRequired };
+CompletedTaskComp.propTypes = { getTaskbyUseridApi: PropTypes.func.isRequired };
 
-OngoingTaskComp.defaultProps = {};
+CompletedTaskComp.defaultProps = {};
 
-export const OngoingTask = connect(null, mapDispatchToProps)(OngoingTaskComp);
+export const CompletedTask = connect(
+  null,
+  mapDispatchToProps
+)(CompletedTaskComp);

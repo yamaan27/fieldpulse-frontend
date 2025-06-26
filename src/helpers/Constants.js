@@ -36,8 +36,15 @@ export const useNavLinks = () => {
       privilegesName: "ongoing_task",
     },
     {
+      to: "/completed_task",
+      label: "Completed Tasks",
+      iconName: task_list_inactive,
+      inactiveIcon: task_list_inactive,
+      privilegesName: "completed_task",
+    },
+    {
       to: "/tasks",
-      label: "Create Task",
+      label: "Task",
       iconName: meeting,
       inactiveIcon: meeting,
       privilegesName: "tasks",
@@ -48,6 +55,13 @@ export const useNavLinks = () => {
       iconName: delivery,
       inactiveIcon: delivery,
       privilegesName: "map",
+    },
+    {
+      to: "/payouts",
+      label: "Payouts",
+      iconName: delivery,
+      inactiveIcon: delivery,
+      privilegesName: "payouts",
     },
     // {
     //   to: "/active_task_module",

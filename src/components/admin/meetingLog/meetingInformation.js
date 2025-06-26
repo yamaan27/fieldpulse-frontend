@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import debounce from "lodash/debounce";
+
 import { useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -130,6 +132,22 @@ const MeetingInformationComp = ({
   }, []);
   
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (!search || search.length < 2) return;
+
+  //     setIsLoading(true);
+  //     const suggestions = await fetchLocationByInput(search);
+
+  //     setGeographyOptions(suggestions || []);
+  //     setIsLoading(false);
+  //   };
+
+  //   const delayDebounce = setTimeout(fetchData, 500); // debounce
+
+  //   return () => clearTimeout(delayDebounce);
+  // }, [search]);
+
   useEffect(() => {
     const fetchData = async () => {
       if (!search || search.length < 2) return;
@@ -141,10 +159,11 @@ const MeetingInformationComp = ({
       setIsLoading(false);
     };
 
-    const delayDebounce = setTimeout(fetchData, 500); // debounce
+    const delayDebounce = setTimeout(fetchData, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [search]);
+  
 
   const capitalizeFirstLetter = (string) => {
     if (!string) return "";
@@ -287,20 +306,42 @@ const MeetingInformationComp = ({
     }
   };
 
-  const handleSearchInputChange = async (inputValue) => {
-    setSearch(inputValue);
+  // const handleSearchInputChange = async (inputValue) => {
+  //   setSearch(inputValue);
+  //   setIsLoading(true);
+
+  //   try {
+  //     const suggestions = await fetchLocationByInput(inputValue); // ✅ await the promise
+
+  //     setGeographyOptions(suggestions || []);
+  //   } catch (err) {
+  //     setGeographyOptions([]);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const debouncedFetchLocation = useCallback(
+    debounce(async (inputValue) => {
+      try {
+        const suggestions = await fetchLocationByInput(inputValue);
+        setGeographyOptions(suggestions || []);
+      } catch (err) {
+        console.error("Debounced fetch error:", err);
+        setGeographyOptions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500),
+    []
+  );
+
+  const handleSearchInputChange = (inputValue) => {
+    if (!inputValue || inputValue.length < 3) return;
     setIsLoading(true);
-
-    try {
-      const suggestions = await fetchLocationByInput(inputValue); // ✅ await the promise
-
-      setGeographyOptions(suggestions || []);
-    } catch (err) {
-      setGeographyOptions([]);
-    } finally {
-      setIsLoading(false);
-    }
+    debouncedFetchLocation(inputValue);
   };
+  
 
   const handleSelectInput = (inputValue) => {
     handleSearchInputChange(inputValue);
@@ -308,6 +349,20 @@ const MeetingInformationComp = ({
   };
 
   console.log("Meetings Deatils ClientInfo:", ClientInfo);
+
+  console.log("📦 geographyOptions:", geographyOptions);
+  console.log("📌 values.location:", values?.location);
+
+  const selectedLocationOption = geographyOptions.find(
+    (opt) =>
+      opt.value?.area === values?.location?.area &&
+      opt.value?.city === values?.location?.city &&
+      opt.value?.state === values?.location?.state &&
+      opt.value?.country === values?.location?.country &&
+      opt.value?.pincode === values?.location?.pincode
+  );
+  console.log("🎯 selectedLocationOption:", selectedLocationOption);
+  
 
   return (
     <Grid item xs={12} sm={12} md={12} sx={{ padding: "0 0 16px 16px" }}>
@@ -389,7 +444,7 @@ const MeetingInformationComp = ({
             <SubTitle>Location</SubTitle>
             {(isFormMode || isEditMode) && (
               <>
-                <NormalSelect
+                {/* <NormalSelect
                   name="location"
                   placeholder="Enter Pincode or City"
                   value={[
@@ -406,6 +461,32 @@ const MeetingInformationComp = ({
                     handleSelectChange(selectedOption, "location")
                   }
                   handleInputChange={handleSelectInput}
+                /> */}
+                <NormalSelect
+                  name="location"
+                  placeholder="Enter Pincode or City"
+                  // value={
+                  //   values?.location
+                  //     ? {
+                  //         label: [
+                  //           values.location.area,
+                  //           values.location.city,
+                  //           values.location.country,
+                  //           values.location.pincode,
+                  //         ]
+                  //           .filter(Boolean)
+                  //           .join(", "),
+                  //         value: values.location,
+                  //       }
+                  //     : null
+                  // }
+                  value={selectedLocationOption?.label || null}
+                  options={geographyOptions}
+                  isLoading={isLoading}
+                  handleChange={(selectedOption) =>
+                    handleSelectChange(selectedOption, "location")
+                  }
+                  handleInputChange={handleSearchInputChange}
                 />
 
                 {errorMessageToDisplay(

@@ -11,6 +11,8 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+    FormLabel,
+    TextField,
 } from '@mui/material'
 
 import PropTypes from 'prop-types'
@@ -43,7 +45,8 @@ import {
 import { validateInput } from 'services/helpers/constants/admin/userManagement'
 import { NormalInput } from 'components/common/NormalInput'
 
-
+import useValidator from "services/useValidator";
+import { errorMessageToDisplay } from "services/helperFunctions";
 import Asterisk from 'components/common/Asterisk'
 
 const CardWrapper = styled(Box)`
@@ -144,113 +147,163 @@ const FixedButtonWrapper = styled(Box)`
   }
 `
 
+const CustomFormLabel = styled(FormLabel)`
+  color: black;
+  font-weight: 400;
+  font-size: 13px;
+`;
+
+const NoteTextField = styled(TextField)`
+  width: 100%;
+  margin-top: 10px;
+  background: #f2f2f2;
+  border-radius: 6px;
+  .MuiOutlinedInput-root {
+    & fieldset {
+      border-color: #f2f2f2;
+      border-radius: 6px;
+    }
+  }
+  textarea {
+    resize: none;
+  }
+`;
+
 const TaskDetailsComp = (props) => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingBtn, setIsLoadingBtn] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
-  const [userData, setUserData] = useState(null)
-  const [isEditMode, setIsEditMode] = useState(location.state?.edit)
-  const [selectedSolutionCenterId, setSelectedSolutionCenterId] = useState(null)
-  const [selectedBusinessUnitId, setSelectedBusinessUnitId] = useState(null)
-  const [values, setValues] = useState({})
-  const [userRole, setUserRole] = useState(null)
-  const [PMOptions, setPMOptions] = useState([])
-const [roleOptions, setRoleOptions] = useState([
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingBtn, setIsLoadingBtn] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(location.state?.edit);
+  const [selectedSolutionCenterId, setSelectedSolutionCenterId] =
+    useState(null);
+  const [selectedBusinessUnitId, setSelectedBusinessUnitId] = useState(null);
+  const [values, setValues] = useState({});
+  const [userRole, setUserRole] = useState(null);
+  const [validator, showValidationMessage] = useValidator();
+  const [roleOptions, setRoleOptions] = useState([
     { label: "Admin", value: "admin" },
     { label: "Agent", value: "agent" },
     { label: "Manager", value: "manager" },
     { label: "Viewer", value: "viewer" },
   ]);
-  const [errors, setErrors] = useState({})
-  const id = location.state?.id || '-'
+  const [errors, setErrors] = useState({});
+  const id = location.state?.id || "-";
 
-  const theme = useTheme()
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
-    const role = getUserRole()
-    setUserRole(role)
-  }, [])
+    const role = getUserRole();
+    setUserRole(role);
+  }, []);
 
-  
   useEffect(() => {
     if (isEditMode) {
       setValues((prevValues) => {
         if (prevValues.role !== values.role) {
           return {
             ...prevValues,
-            businessUnitids: '',
-            solutionCenterids: '',
+            businessUnitids: "",
+            solutionCenterids: "",
             ClientIds: null,
-          }
+          };
         }
-        return prevValues
-      })
+        return prevValues;
+      });
     }
-  }, [values.role])
+  }, [values.role]);
 
   useEffect(() => {
-      getTaskbyId()
-    }, [id])
-    const getTaskbyId = () => {
-      setIsLoading(true)
-      let query = {
-        id: id,
-      }
-  
-      props
-        .getTaskbyidApi(query)
-        .then((response) => {
-
-          console.log("Response from getTaskbyidApi:", response);
-          const formattedResponse = {
-            ...response,
-            // date: moment.utc(response?.dueDate).format('YYYY-MM-DD HH:mm:ss'),
-          }
-
-          console.log("Formatted Response:", formattedResponse);
-  
-          setUserData(formattedResponse);
-          // setValues(formattedResponse)
-          setIsLoading(false)
-        })
-        .catch(() => setIsLoading(false))
-    }
-
-
-  const handleDelete = () => {
+    getTaskbyId();
+  }, [id]);
+  const getTaskbyId = () => {
+    setIsLoading(true);
     let query = {
       id: id,
-    }
+    };
+
     props
-      .deleteUserApi(query)
-      .then(({ message }) => {
-        toast.success(message)
-        navigate("/task_list");
+      .getTaskbyidApi(query)
+      .then((response) => {
+        console.log("Response from getTaskbyidApi:", response);
+        const formattedResponse = {
+          ...response,
+          // date: moment.utc(response?.dueDate).format('YYYY-MM-DD HH:mm:ss'),
+        };
+
+        console.log("Formatted Response:", formattedResponse);
+
+        setUserData(formattedResponse);
+        // setValues(formattedResponse)
+        setIsLoading(false);
       })
-      .catch(({ error }) => {
-        toast.error(error)
-      })
-  }
+      .catch(() => setIsLoading(false));
+  };
+
+  const handleDelete = () => {
+    if (validator.allValid()) {
+
+      // props
+      //   .deleteUserApi(query)
+      //   .then(({ message }) => {
+      //     toast.success(message);
+      //     navigate("/task_list");
+      //   })
+      //   .catch(({ error }) => {
+      //     toast.error(error);
+      //   });
+
+      const body = {
+        // ...values,
+        // id,
+        reject_reason: values.reject_reason,
+        status: "cancelled",
+      };
+      let query = {
+        id: id,
+      };
+
+      console.log("Body to be sent:", body);
+      console.log("query to be sent:", query);
+      props
+        .updateTaskApi(query, body)
+        .then(({ message }) => {
+          console.log("Response from updateTaskApi:", message);
+          toast.success(message);
+          navigate("/task_list");
+          setModalOpen(false);
+          setIsLoadingBtn(false);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setModalOpen(false);
+          setIsLoadingBtn(false);
+          setIsLoading(false);
+          setIsEditMode(true);
+          toast.error(err.message || err.error);
+        });
+    } else {
+      showValidationMessage(true);
+    }
+  };
 
   const handleBackClick = () => {
     navigate("/task_list");
-  }
+  };
 
-
-  
   const handleDeleteClient = () => {
-    setModalOpen(true)
-  }
+    setModalOpen(true);
+  };
   const handleEditClick = () => {
-    setIsEditMode(true)
-  }
+    setIsEditMode(true);
+  };
 
   const handleCancelEdit = () => {
-    setIsEditMode(false)
-  }
+    setIsEditMode(false);
+  };
 
   function getISTISOString() {
     const now = new Date();
@@ -264,13 +317,11 @@ const [roleOptions, setRoleOptions] = useState([
     return istTime.toISOString().slice(0, -1); // remove the trailing 'Z'
   }
 
-
   const handleSaveEdit = () => {
-    
-    setIsLoadingBtn(true)
-    setIsLoading(true)
+    setIsLoadingBtn(true);
+    setIsLoading(true);
     // if (validator.allValid()) {
-    setIsEditMode(false)
+    setIsEditMode(false);
     const currentTimeIST = getISTISOString();
 
     const body = {
@@ -283,11 +334,10 @@ const [roleOptions, setRoleOptions] = useState([
       id: id,
     };
 
-
     console.log("Body to be sent:", body);
     console.log("query to be sent:", query);
     props
-      .updateTaskApi(query,body)
+      .updateTaskApi(query, body)
       .then(({ message }) => {
         console.log("Response from updateTaskApi:", message);
         toast.success(message);
@@ -306,39 +356,37 @@ const [roleOptions, setRoleOptions] = useState([
     // } else {
     //   showValidationMessage(true)
     // }
-  }
+  };
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setValues({ ...values, [name]: value })
-    const errorMessage = validateInput(name, value)
-    setErrors((prev) => ({ ...prev, [name]: errorMessage }))
-  }
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+    const errorMessage = validateInput(name, value);
+    setErrors((prev) => ({ ...prev, [name]: errorMessage }));
+  };
 
-   const handleSelectChange = (selectedOption, name) => {
-      console.log("🔽 Role selected:", selectedOption, "for field:", name);
-  
-      const errorMessage = validateInput(name, selectedOption?.value);
-      setErrors((prev) => ({ ...prev, [name]: errorMessage }));
-  
-      // Also update the values object
-      setValues((prev) => ({
-        ...prev,
-        [name]: selectedOption?.value || "",
-      }));
-    };
+  const handleSelectChange = (selectedOption, name) => {
+    console.log("🔽 Role selected:", selectedOption, "for field:", name);
 
-  
+    const errorMessage = validateInput(name, selectedOption?.value);
+    setErrors((prev) => ({ ...prev, [name]: errorMessage }));
+
+    // Also update the values object
+    setValues((prev) => ({
+      ...prev,
+      [name]: selectedOption?.value || "",
+    }));
+  };
 
   const handleClientRemove = (valueToRemove) => {
     const updatedClientIds = values.ClientIds?.filter(
       (stakeholderId) => stakeholderId !== valueToRemove
-    )
+    );
 
     setValues((prevValues) => ({
       ...prevValues,
       ClientIds: updatedClientIds,
-    }))
-  }
+    }));
+  };
   // if (isLoading) {
   //   return (
   //     <div style={{ textAlign: 'center' }}>
@@ -359,9 +407,16 @@ const [roleOptions, setRoleOptions] = useState([
 
     return `${day} ${month} ${year}`;
   };
-  
 
   console.log("User Data:", userData);
+
+  const handleNoteChange = (event) => {
+    const { value } = event.target;
+    setValues({ ...values, reject_reason: value });
+    // validateInput('comments', value)
+  };
+
+  console.log("Values handleNoteChange:", values);
 
   return (
     <>
@@ -395,7 +450,7 @@ const [roleOptions, setRoleOptions] = useState([
                   labelLeft={isEditMode ? "Cancel" : "Reject"}
                   labelRight={isEditMode ? "Save" : "Start Task"}
                   iconLeft={isEditMode ? "cancel" : "delete"}
-                  iconRight={"save" }
+                  iconRight={"save"}
                   size="small"
                   leftVariant="outlined"
                   rightVariant="contained"
@@ -504,7 +559,7 @@ const [roleOptions, setRoleOptions] = useState([
                           <Title>
                             {" "}
                             {userData?.location
-                              ? `Lat: ${userData.location.lat}, Lng: ${userData.location.lng}`
+                              ? `Lat: ${userData.location?.area}, Lng: ${userData.location.lng}`
                               : "N/A"}
                           </Title>
                         )}
@@ -541,7 +596,9 @@ const [roleOptions, setRoleOptions] = useState([
                             )}
                           </FormControl>
                         ) : (
-                          <Title>{formatDate(userData?.dueDate) || "N/A"}</Title>
+                          <Title>
+                            {formatDate(userData?.dueDate) || "N/A"}
+                          </Title>
                         )}
                       </CardWrap>
                     </Grid>
@@ -588,10 +645,11 @@ const [roleOptions, setRoleOptions] = useState([
                       }}
                     >
                       <CardWrap>
-                        <SubTitle>Attachment {isEditMode && <Asterisk />}</SubTitle>
-                        
-                          <Title>{ "N/A"}</Title>
+                        <SubTitle>
+                          Attachment {isEditMode && <Asterisk />}
+                        </SubTitle>
 
+                        <Title>{"N/A"}</Title>
                       </CardWrap>
                     </Grid>
 
@@ -652,9 +710,45 @@ const [roleOptions, setRoleOptions] = useState([
             <NormalButton label="Reject" size="medium" onClick={handleDelete} />
           </>
         }
-        title="Delete User?"
+        title="Reject Task?"
       >
-        <SubContent>Are you sure you want to delete this user?</SubContent>
+        <SubContent>Are you sure you want to Reject this Task?</SubContent>
+        <Grid
+          item
+          xs={isEditMode ? 12 : "auto"}
+          sm={isEditMode ? 6 : 4}
+          md={4}
+          sx={{
+            minWidth: { xs: "145px" },
+          }}
+        >
+          <FormControl fullWidth>
+            <CustomFormLabel>
+              Reason fo rejecting <Asterisk />
+            </CustomFormLabel>
+
+            <NoteTextField
+              multiline
+              rows={4}
+              variant="outlined"
+              value={values.reject_reason || ""}
+              onChange={handleNoteChange}
+              placeholder="Enter the value here"
+            />
+
+            {/* {isDetailsMode && !isEditMode && (
+                          <CustomTypography>
+                            {values?.description || "N/A"}
+                          </CustomTypography>
+                        )} */}
+            {errorMessageToDisplay(
+              validator,
+              "rejection_reason",
+              values.reject_reason,
+              "required"
+            )}
+          </FormControl>
+        </Grid>
       </Modal>
       <FixedButtonWrapper>
         {isSmallScreen && (

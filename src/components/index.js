@@ -12,4 +12,6 @@ export {
   TaskDetails,
   OngoingTask,
   OngoingTaskDetails,
+  CompletedTask,
+  Payouts,
 } from "./admin";

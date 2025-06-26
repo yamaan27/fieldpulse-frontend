@@ -4,7 +4,18 @@ import { bindActionCreators } from 'redux'
 
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import { getUserData, getUserRole } from "utils/authUtils";
 import { solutionList } from "services/helpers/constants/admin/dashboard";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
 import {
   Box,
   Grid,
@@ -25,7 +36,7 @@ import {
 import Icon from 'services/icon'
 
 import { TableWrapper } from 'components/common/TableWrapper'
-// import MobilePagination from 'components/common/MobilePagination'
+import AgentReportChart from "components/common/AgentReportChart";
 import { DashboardCard } from 'components/common/DashboardCard'
 
 // import ComingSoon from 'assets/svg/coming_soon2.svg'
@@ -96,10 +107,26 @@ const CardTitle = styled(Typography).attrs({ variant: 'h6' })`
 //   min-width: fit-content;
 // `
 
+const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 const SolutionCenterComp = ({
   accountData,
   // count,
   getAgentsummaryApi,
+  getAgentReportApi,
   // isLoading,
   overallGovernance,
   overallAgOpportunity,
@@ -110,22 +137,85 @@ const SolutionCenterComp = ({
   const isSmallScreen = useMediaQuery('(max-width:700px)')
     const [isLoading, setIsLoading] = useState(false)
     const [agentSummary, setAgentSummary] = useState([]);
+    const [userId, setUserId] = useState(null);
+     const [userRole, setUserRole] = useState(null);
+     const [agentReportData, setAgentReportData] = useState(null);
+     const [monthlyData, setMonthlyData] = useState([]);
+
+
+     useEffect(() => {
+        const id = getUserData();
+         const role = getUserRole();
+              setUserRole(role);
+        setUserId(id);
+
+      }, []);
+    
 
     useEffect(() => {
       getAgentsummaryApi().then((res) => {
-        console.log("getAgentsummaryApi getAgentsummaryApi:", res);
         setAgentSummary(res); // ✅ Save API response to state
       });
     }, []);
-  const displayData =
-    accountData.length === 0
-      ? [
-          { clientName: 'Governance', value: overallGovernance },
-          { clientName: 'Ag Opportunity', value: overallAgOpportunity },
-          { clientName: 'Escalation', value: overallEscalation },
-          { clientName: 'X+ Recommendation', value: overallXplus },
-        ]
-      : accountData
+
+    const formatReportData = (monthlyData) => {
+      const monthMap = Array.from({ length: 12 }, (_, i) => ({
+        month: MONTH_NAMES[i],
+        completed: 0,
+        pending: 0,
+        in_progress: 0,
+        cancelled: 0,
+        total: 0,
+      }));
+
+      monthlyData.forEach((item) => {
+        const index = item.month - 1;
+        monthMap[index] = {
+          ...monthMap[index],
+          ...item,
+          month: MONTH_NAMES[index],
+        };
+      });
+
+      return monthMap;
+    };
+
+      // useEffect(() => {
+      //   if (userId) {
+      //     getAgentReport();
+      //   }
+      // }, [userId]);
+
+      // const getAgentReport = () => {
+      //     setIsLoading(true);
+      //     // let query = {
+      //     //   id: userId,
+      //     // };
+      //     let query = {
+      //       id: userId,
+      //       // filter: "completed",
+      //     };
+      
+      //     getAgentReportApi(query)
+      //       .then(async (response) => {
+      //         console.log("getAgentReportApi response", response);
+      //         setIsLoading(false);
+      //       })
+      //       .catch(() => setIsLoading(false));
+      //   };
+      useEffect(() => {
+        if (userId) {
+          getAgentReportApi({ id: userId })
+            .then((data) => {
+              console.log("API monthly data:", data);
+              setMonthlyData(data.report || []); // ✅ FIXED
+            })
+            .catch((err) => {
+              console.error("Error fetching agent report", err);
+            });
+        }
+      }, [userId]);
+      
 
   return (
     <SolutionWrap>
@@ -181,25 +271,66 @@ const SolutionCenterComp = ({
               </Box>
             </>
           ) : (
-            <TableWrapper
-              rowsPerPage={rowsPerPage}
-              setRowsPerPage={setRows}
-              headerDetails={solutionList}
-              userList={agentSummary}
-              // count={count}
-              pagination={false}
-              insights={true}
-            >
-              {agentSummary.map((agent) => (
-                <TableRow hover key={agent.agentId}>
-                  <TableCell align="left">{agent.name}</TableCell>
-                  <TableCell align="left">{agent.completed}</TableCell>
-                  <TableCell align="left">{agent.pending}</TableCell>
-                  <TableCell align="left">{agent.inProgress}</TableCell>
-                  <TableCell align="left">{agent.cancelled}</TableCell>
-                </TableRow>
-              ))}
-            </TableWrapper>
+            <>
+            {userRole !== "agent" && (
+              <TableWrapper
+                rowsPerPage={rowsPerPage}
+                setRowsPerPage={setRows}
+                headerDetails={solutionList}
+                userList={agentSummary}
+                // count={count}
+                pagination={false}
+                insights={true}
+              >
+                {agentSummary.map((agent) => (
+                  <TableRow hover key={agent.agentId}>
+                    <TableCell align="left">{agent.name}</TableCell>
+                    <TableCell align="left">{agent.completed}</TableCell>
+                    <TableCell align="left">{agent.pending}</TableCell>
+                    <TableCell align="left">{agent.inProgress}</TableCell>
+                    <TableCell align="left">{agent.cancelled}</TableCell>
+                  </TableRow>
+                ))}
+              </TableWrapper>)}
+
+              {/* <Grid item xs={12} md={6}> */}
+              <ResponsiveContainer width="100%" height={350}>
+                <BarChart
+                  data={formatReportData(monthlyData)}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar
+                    dataKey="completed"
+                    name="Completed"
+                    stackId="a"
+                    fill="#4CAF50"
+                  />
+                  <Bar
+                    dataKey="pending"
+                    name="Pending"
+                    stackId="a"
+                    fill="#FFC107"
+                  />
+                  <Bar
+                    dataKey="in_progress"
+                    name="In Progress"
+                    stackId="a"
+                    fill="#2196F3"
+                  />
+                  <Bar
+                    dataKey="cancelled"
+                    name="Cancelled"
+                    stackId="a"
+                    fill="#F44336"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+              {/* </Grid> */}
+            </>
           )}
         </Grid>
       )}
@@ -210,11 +341,15 @@ const SolutionCenterComp = ({
 // export default SolutionCenter
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getAgentsummaryApi }, dispatch);
+  return bindActionCreators(
+    { getAgentsummaryApi, getAgentReportApi },
+    dispatch
+  );
 }
 
 SolutionCenterComp.propTypes = {
   getAgentsummaryApi: PropTypes.func.isRequired,
+  getAgentReportApi: PropTypes.func.isRequired,
   accountData: PropTypes.array.isRequired,
   // count: PropTypes.number.isRequired,
   overallGovernance: PropTypes.number.isRequired,

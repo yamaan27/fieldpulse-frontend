@@ -78,7 +78,6 @@ const SummaryComp = ({
   useEffect(() => {
     summaryApi().then((res) => {
       setSummaryData(res);
-      console.log("summaryApi summaryApi:", res);
     });
   }, []);
   const chartData = summaryData

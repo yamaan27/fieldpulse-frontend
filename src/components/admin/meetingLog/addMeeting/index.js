@@ -173,7 +173,7 @@ const AddMeetingComp = (props) => {
     props
       .addTaskApi( query, body)
       .then(({ message }) => {
-        successToast(message)
+        // successToast(message)
         navigate('/tasks')
         setIsLoading(false)
       })

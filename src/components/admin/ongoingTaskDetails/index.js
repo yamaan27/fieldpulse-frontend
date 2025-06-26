@@ -310,10 +310,10 @@ const OngoingTaskDetailsComp = (props) => {
       .then(({ message }) => {
         console.log("Response from updateTaskApi:", message);
         toast.success(message);
-        // navigate("/ongoing_task");
-        // setModalOpen(false);
-        // setIsLoadingBtn(false);
-        // setIsLoading(false);
+        navigate("/ongoing_task");
+        setModalOpen(false);
+        setIsLoadingBtn(false);
+        setIsLoading(false);
       })
       .catch((err) => {
         setModalOpen(false);

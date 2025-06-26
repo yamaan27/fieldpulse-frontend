@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { Summary } from './Summary'
 import { MonthlyReport } from "./MonthlyReport";
 import { SolutionCenter } from './SolutionCenter'
-
+import { getUserRole } from "utils/authUtils";
 
 import TitleWrapper from 'components/common/TitleWrapper'
 import FooterButton from 'components/common/FooterButton'
@@ -55,8 +55,8 @@ const ProjectInsightsComp = ({  }) => {
   const topRef = useRef(null);
   const countsSetRef = useRef(false);
   const [filter, setFilter] = useState("1");
-  const [accountData, setAccountData] = useState([]);
   const [count, setCount] = useState(0);
+   const [userRole, setUserRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [countsLoaded, setCountsLoaded] = useState(false);
@@ -81,6 +81,11 @@ const ProjectInsightsComp = ({  }) => {
     navigate("/meeting_log/add_meeting/form");
   };
 
+   useEffect(() => {
+      const role = getUserRole();
+      setUserRole(role);
+    }, []);
+
   // useEffect(() => {
   //   if (topRef.current) {
   //     topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -97,13 +102,15 @@ const ProjectInsightsComp = ({  }) => {
       <Grid item xs={12} style={{ width: "100%" }} pb={0}>
         <TitleWrapper
           style={{ paddingBottom: "0" }}
-          title="Project Insights"
+          title="Report Insights"
           filter={filter}
         />
       </Grid>
 
       {/* <Box pb={30}> */}
       <Grid container pb={20} spacing={2} sx={{ alignItems: "stretch" }}>
+      {userRole !== "agent" && (
+  <>
         <Grid
           item
           xs={12}
@@ -115,17 +122,7 @@ const ProjectInsightsComp = ({  }) => {
         >
           <AccountBoxWrapper>
             <Summary
-              // selectedFilter={filter}
-              // setCounts={setCounts}
-              // topRef={topRef}
               style={{ flexGrow: 1 }}
-              selectedFilter={filter}
-              accountData={accountData}
-              count={count}
-              setCounts={setCounts}
-              topRef={topRef}
-              page={page}
-              setPage={setPage}
               isLoading={isLoading}
             />
           </AccountBoxWrapper>
@@ -141,21 +138,13 @@ const ProjectInsightsComp = ({  }) => {
         >
           <AccountBoxWrapper>
             <MonthlyReport
-              // selectedFilter={filter}
-              // setCounts={setCounts}
-              // topRef={topRef}
               style={{ flexGrow: 1 }}
-              selectedFilter={filter}
-              accountData={accountData}
-              count={count}
-              setCounts={setCounts}
-              topRef={topRef}
-              page={page}
-              setPage={setPage}
               isLoading={isLoading}
             />
           </AccountBoxWrapper>
         </Grid>
+        </>
+      )}
         <Grid
           item
           xs={12}
@@ -167,12 +156,7 @@ const ProjectInsightsComp = ({  }) => {
         >
           <SolutionCenter
             style={{ flexGrow: 1 }}
-            accountData={accountData}
             isLoading={countsLoaded ? false : isLoading}
-            overallGovernance={counts.overallGovernanceCount}
-            overallAgOpportunity={counts.overallAgOpportunityCount}
-            overallEscalation={counts.overallEscalationCount}
-            overallXplus={counts.overallXplusRecommendationCount}
           />
         </Grid>
       </Grid>

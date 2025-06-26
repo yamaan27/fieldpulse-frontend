@@ -6,13 +6,17 @@ const DashboardPage = lazy(
   () => import('../pages/admin/dashboard/DashboardPage')
 )
 const LiveMapPage = lazy(() => import("../pages/admin/liveMap/liveMapPage"));
-// const LiveMapPage = lazy(() => import("../pages/admin/liveMap/LiveMapPage"));
+const PayoutsPage = lazy(() => import("../pages/admin/payouts/payoutsPage"));
 
 const TaskListPage = lazy(
   () => import("../pages/admin/TaskList/TaskListPage")
 );
 const OngoingTaskPage = lazy(
+
   () => import("../pages/admin/OngoingTask/OngoingTaskPage")
+);
+const CompletedTaskPage = lazy(
+  () => import("../pages/admin/CompletedTask/CompletedTaskPage")
 );
 const OngoingTaskDetailsPage = lazy(
   () => import("../pages/admin/OngoingTask/OngoingTaskDetailsPage")
@@ -74,6 +78,24 @@ const protectedRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <LiveMapPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/payouts",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DashboardLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <PayoutsPage />
           </Suspense>
         ),
       },
@@ -163,6 +185,32 @@ const protectedRoutes = [
           </Suspense>
         ),
       },
+    ],
+  },
+  {
+    path: "/completed_task",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DashboardLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <CompletedTaskPage />
+          </Suspense>
+        ),
+      },
+      // {
+      //   path: "details/:id",
+      //   element: (
+      //     <Suspense fallback={<div>Loading...</div>}>
+      //       <OngoingTaskDetailsPage />
+      //     </Suspense>
+      //   ),
+      // },
     ],
   },
   {

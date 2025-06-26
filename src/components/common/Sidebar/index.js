@@ -204,7 +204,6 @@ function SidebarMenuComp({
     const role = getUserRole();
     setUserRole(role);
 
-    console.log("User Role Sidebar:", role);
   }, []);
 
 
@@ -256,14 +255,21 @@ function SidebarMenuComp({
                 {navLinks
                   .filter((link) => {
                     if (userRole === "agent") {
-                      return (
-                        link.privilegesName === "task_list" ||
-                        link.privilegesName === "ongoing_task" ||
-                        link.privilegesName === "logout"
+                      // Show only specific pages for agents
+                      return ["task_list", "ongoing_task",'completed_task',"report","payouts", "logout"].includes(
+                        link.privilegesName
                       );
+                    } else {
+                      // Hide task-related pages from non-agents
+                      return ![
+                        "task_list",
+                        "ongoing_task",
+                        "completed_task",
+                        "payouts",
+                      ].includes(link.privilegesName);
                     }
-                    return true; // Show all links for other roles
                   })
+
                   .map(({ to, label, iconName, disable }, index) => {
                     const isActive = location.pathname.startsWith(to);
                     const iconColor = disable
