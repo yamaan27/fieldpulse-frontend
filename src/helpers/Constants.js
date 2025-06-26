@@ -29,6 +29,13 @@ export const useNavLinks = () => {
       privilegesName: "task_list",
     },
     {
+      to: "/ongoing_task",
+      label: "Ongoing Tasks",
+      iconName: task_list_inactive,
+      inactiveIcon: task_list_inactive,
+      privilegesName: "ongoing_task",
+    },
+    {
       to: "/tasks",
       label: "Create Task",
       iconName: meeting,

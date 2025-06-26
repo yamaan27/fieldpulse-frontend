@@ -30,7 +30,7 @@ import { getUserEmail } from 'utils/authUtils'
 
 import { MeetingInformation } from '../meetingInformation'
 
-import { addTaskApi } from 'action/MeetingLog/MeetingLogAct'
+import { addTaskApi } from 'action/Task/TaskAct'
 
 const BoxWrapper = styled(Box)`
   border-radius: 24px;

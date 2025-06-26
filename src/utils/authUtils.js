@@ -36,3 +36,25 @@ export const getUserData = () => {
 export const clearUserData = () => {
   localStorage.removeItem('userData')
 }
+
+
+export const reverseGeocode = async (lat, lng) => {
+  const apiKey = "YOUR_GOOGLE_API_KEY"; // 🔒 keep this safe
+  const response = await fetch(
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
+  );
+  const data = await response.json();
+
+  if (!data.results || !data.results.length) return "Unknown Location";
+
+  const components = data.results[0].address_components;
+  const area = components.find((c) =>
+    c.types.includes("sublocality")
+  )?.long_name;
+  const city = components.find((c) => c.types.includes("locality"))?.long_name;
+  const pincode = components.find((c) =>
+    c.types.includes("postal_code")
+  )?.long_name;
+
+  return [area, city, pincode].filter(Boolean).join(", ");
+};

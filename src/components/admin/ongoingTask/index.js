@@ -66,8 +66,8 @@ const Wrapper = styled(Box)`
 const StyledButton = styled(Button)({
   width: "max-content",
   backgroundColor: "#FFFFFF",
-  color: "#EB5757",
-  border: "1px solid #EB5757",
+  color: "#324559",
+  border: "1px solid #324559",
   fontSize: "16px",
   height: "43px",
   borderRadius: "8px",
@@ -87,8 +87,8 @@ const StyledButton = styled(Button)({
 const StyledButtonWhite = styled(Button)({
   width: "max-content",
   backgroundColor: "#FFFFFF",
-  color: "#EB5757",
-  border: "1px solid #EB5757",
+  color: "#324559",
+  border: "1px solid #324559",
   fontSize: "16px",
   height: "43px",
   borderRadius: "8px",
@@ -106,7 +106,7 @@ const StyledButtonWhite = styled(Button)({
   },
 });
 
-const TaskListComp = (props) => {
+const OngoingTaskComp = (props) => {
   const [userList, setUserList] = useState([]);
 
   const [order, setOrder] = useState("asc");
@@ -196,19 +196,24 @@ const TaskListComp = (props) => {
   }, [userId]);
 
   const goToDetailPage = (_id, edit = false) => {
-    navigate(`/task_list/details/${_id}`, {
+    navigate(`/ongoing_task/details/${_id}`, {
       state: { id: _id, edit },
     });
   };
 
   const getTaskbyId = () => {
     setIsLoading(true);
+    // let query = {
+    //   id: userId,
+    // };
     let query = {
-      id: userId,
+      id: userId ,
+      filter: "in_progress",
     };
 
     props
-      .getTaskbyUseridApi({ id: userId })
+      // .getTaskbyUseridApi({ id: userId })
+      .getTaskbyUseridApi(query)
       .then(async (response) => {
         const enrichedTasks = await Promise.all(
           response.map(async (task) => {
@@ -240,7 +245,7 @@ const TaskListComp = (props) => {
       <BoxWrapper isSmallScreen={isSmallScreen}>
         <Wrapper>
           <Typography variant="h6" fontWeight="bold" gutterBottom>
-            Tasks
+            Ongoing Tasks
           </Typography>
 
           {/* <TableWrapper
@@ -384,73 +389,26 @@ const TaskListComp = (props) => {
                   { label: "Status", value: task.status },
                   { label: "Due Date", value: formatDate(task?.due) },
                 ]}
-                // customActions={
-                //   <Box
-                //     display="flex"
-                //     justifyContent="center"
-                //     alignItems="center"
-                //     gap={"20px"}
-                //     padding="0 16px 0 16px"
-                //   >
-                //     <Box
-                //       display="flex"
-                //       flexDirection="row"
-                //       gap={2}
-                //       justifyContent={isSmallScreen ? "center" : "flex-end"}
-                //       alignItems="center"
-                //       width={isSmallScreen ? "100%" : "auto"}
-                //     >
-                //       <StyledButtonWhite
-                //         type="submit"
-                //         variant="outlined"
-                //         endIcon={<CloseIcon style={{ color: "#EB5757" }} />}
-                //         onClick={() => navigate("/tasks")}
-                //       >
-                //         Reject
-                //       </StyledButtonWhite>
-                //     </Box>
-                //     <Box
-                //       display="flex"
-                //       flexDirection="row"
-                //       justifyContent="center"
-                //       alignItems="center"
-                //       width="100%"
-                //       gap={2}
-                //     >
-                     
-                //       <StyledButton
-                //         type="submit"
-                //         variant="contained"
-                //         color="primary"
-                //         endIcon={<ArrowForwardIcon />}
-                //         // onClick={() => handleSubmit("submit")}
-                //       >
-                //         Submit
-                //       </StyledButton>
-                //     </Box>
-                //     <Box
-                //       display="flex"
-                //       gap={"10px"}
-                //       alignItems="center"
-                //       onClick={() => {
-                //         setModalOpen(true);
-                //         setId(_id);
-                //       }}
-                //       style={{ cursor: "pointer" }}
-                //     >
-                //       <Icon
-                //         // onClick={() => {
-                //         //   setModalOpen(true)
-                //         //   setId(_id)
-                //         // }}
-                //         iconName="delete"
-                //         fontSize="18px"
-                //         iconColor="#4C4C4C"
-                //       />
-                //       <SmallText variant="body2">Delete</SmallText>
-                //     </Box>
-                //   </Box>
-                // }
+                customActions={
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                    width="100%"
+                    gap={2}
+                  >
+                    <StyledButton
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      endIcon={<ArrowForwardIcon />}
+                      onClick={() => goToDetailPage(task.id)}
+                    >
+                      Complete Task
+                    </StyledButton>
+                  </Box>
+                }
               />
             ))
           )}
@@ -464,8 +422,8 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ getTaskbyUseridApi }, dispatch);
 };
 
-TaskListComp.propTypes = { getTaskbyUseridApi: PropTypes.func.isRequired };
+OngoingTaskComp.propTypes = { getTaskbyUseridApi: PropTypes.func.isRequired };
 
-TaskListComp.defaultProps = {};
+OngoingTaskComp.defaultProps = {};
 
-export const TaskList = connect(null, mapDispatchToProps)(TaskListComp);
+export const OngoingTask = connect(null, mapDispatchToProps)(OngoingTaskComp);

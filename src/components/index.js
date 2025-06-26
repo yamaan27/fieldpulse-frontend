@@ -9,4 +9,7 @@ export {
   MeetingDetail,
   ProjectInsights,
   LiveMap,
+  TaskDetails,
+  OngoingTask,
+  OngoingTaskDetails,
 } from "./admin";

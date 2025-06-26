@@ -1,7 +1,7 @@
 import { generateQuery } from '../helperFunctions'
 
 export const taskApiVariables = {
-  getAllMeetings: {
+  getAllTasks: {
     url: "api/tasks",
     method: "get",
     baseURL: "auth",
@@ -35,13 +35,48 @@ export const taskApiVariables = {
       this.query[key] = payload;
     },
   },
-  getMeetingbyidUrl: {
-    url: "api/tasks/",
+  updateTaskUrl: {
+    url: "api/tasks/taskId/",
+    method: "put",
+    baseURL: "auth",
+    id: null,
+    query: {
+      sendClient: null,
+      sendInternal: null,
+      submit: null,
+    },
+    get api() {
+      return this.url + this.id + generateQuery(this.query);
+    },
+    set addQuery({ key, payload }) {
+      this.query[key] = payload;
+    },
+  },
+  getTaskbyidUrl: {
+    url: "api/tasks/taskId/",
     method: "get",
     baseURL: "auth",
     id: null,
     get api() {
       return this.url + this.id;
+    },
+  },
+  getTaskbyUseridUrl: {
+    url: "api/tasks/user/",
+    method: "get",
+    baseURL: "auth",
+    id: null,
+    // get api() {
+    //   return this.url + this.id;
+    // },
+    query: {
+      filter: null,
+    },
+    get api() {
+      return this.url + this.id + generateQuery(this.query);
+    },
+    set addQuery({ key, payload }) {
+      this.query[key] = payload;
     },
   },
   getStakeholdersUrl: {
@@ -77,8 +112,8 @@ export const taskApiVariables = {
     method: "post",
     baseURL: "auth",
   },
-  editMeeting: {
-    url: "meetings/editMeeting",
+  editTask: {
+    url: "meetings/editTask",
     method: "post",
     baseURL: "auth",
     query: {

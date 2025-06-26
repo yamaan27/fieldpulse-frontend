@@ -34,9 +34,9 @@ import moment from 'moment'
 
 import { MeetingInformation } from '../meetingInformation'
 import {
-  editMeetingApi,
-  getMeetingbyidApi,
-} from 'action/MeetingLog/MeetingLogAct'
+  editTaskApi,
+  getTaskbyidApi,
+} from 'action/Task/TaskAct'
 
 import { errorToast, successToast } from 'services/helperFunctions'
 import { toast } from 'react-toastify'
@@ -169,16 +169,16 @@ const MeetingDetailComp = (props) => {
   const isSmallScreenButton = useMediaQuery('(max-width:1085px)')
 
   useEffect(() => {
-    getMeetingbyId()
+    getTaskbyId()
   }, [id])
-  const getMeetingbyId = () => {
+  const getTaskbyId = () => {
     setIsLoading(true)
     let query = {
       id: id,
     }
 
     props
-      .getMeetingbyidApi(query)
+      .getTaskbyidApi(query)
       .then((response) => {
         const formattedResponse = {
           ...response,
@@ -256,7 +256,7 @@ const MeetingDetailComp = (props) => {
     }
 
     props
-      .editMeetingApi(query, body)
+      .editTaskApi(query, body)
       .then(({ message }) => {
         setIsEditMode(false)
         successToast(message)
@@ -487,16 +487,16 @@ const MeetingDetailComp = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
-      getMeetingbyidApi,
-      editMeetingApi,
+      getTaskbyidApi,
+      editTaskApi,
     },
     dispatch
   )
 }
 
 MeetingDetailComp.propTypes = {
-  getMeetingbyidApi: PropTypes.func.isRequired,
-  editMeetingApi: PropTypes.func.isRequired,
+  getTaskbyidApi: PropTypes.func.isRequired,
+  editTaskApi: PropTypes.func.isRequired,
 }
 
 MeetingDetailComp.defaultProps = {}

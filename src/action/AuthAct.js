@@ -27,10 +27,13 @@ export const loginApi = (body) => () => {
     api({ ...authApi.loginAdminApi, body })
       .then((data) => {
         // Store token
+        console.log("✅ [loginApi] Success id:", data.user.id);
+
         if (data?.token) {
           localStorage.setItem("authToken", JSON.stringify(data.token));
         }
-
+        setUserRole(data?.user?.role);
+        setUserData(data?.user?.id);
         resolve(data);
       })
       .catch((error) => {

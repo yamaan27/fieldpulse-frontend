@@ -337,6 +337,7 @@ const LoginComp = ({ loginApi }) => {
     }
     loginApi(body)
       .then(({ message }) => {
+        console.log("✅ Login successful:", message);
         toast.success(message);
         navigate("/dashboard");
         setIsLoading(false);

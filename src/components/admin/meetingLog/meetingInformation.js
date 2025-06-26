@@ -359,7 +359,7 @@ const MeetingInformationComp = ({
                 placeholder="Select Assignee"
                 options={clientOptions}
                 name="assignedTo"
-                value={values?.assignedTo.name}
+                value={values?.assignedTo}
                 handleChange={(selectedOption) =>
                   handleSelectChange(selectedOption, "assignedTo")
                 }
@@ -367,13 +367,13 @@ const MeetingInformationComp = ({
             )}
             {isDetailsMode && !isEditMode && (
               <CustomTypography>
-                {values?.assignedTo.name || "N/A"}
+                {values?.assignedTo?.name || "N/A"}
               </CustomTypography>
             )}
             {errorMessageToDisplay(
               validator,
               "assignedTo",
-              values?.assignedTo.name,
+              values?.assignedTo,
               "required"
             )}
           </FormControl>

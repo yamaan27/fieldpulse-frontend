@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
 
 import { CircularProgress, useMediaQuery } from '@mui/material'
 
-import { clearUserRole, getUserData } from 'utils/authUtils'
+import { clearUserRole, getUserData, getUserRole } from "utils/authUtils";
 
 import { useNavLinks } from 'helpers/Constants'
 
@@ -192,22 +192,21 @@ const LogoWrapper = styled('div')({
 
 function SidebarMenuComp({
   isSidebarOpen,
-  // getbyidApi,
   setIsSidebarOpen = () => {},
 }) {
   const location = useLocation()
   const navigate = useNavigate()
   const { navLinks } = useNavLinks()
-  const [userId, setUserId] = useState(null)
-  // const [isLoading, setIsLoading] = useState(false)
   const isSmallScreen = useMediaQuery('(max-width:770px)')
-
-  const [permissions, setPermissions] = useState([])
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    const role = getUserData()
-    setUserId(role)
-  }, [])
+    const role = getUserRole();
+    setUserRole(role);
+
+    console.log("User Role Sidebar:", role);
+  }, []);
+
 
   const handleLogout = () => {
     // logout()
@@ -216,43 +215,6 @@ function SidebarMenuComp({
     localStorage.clear()
     navigate('/login')
   }
-
-  useEffect(() => {
-    if (userId) {
-      getUserbyId()
-    }
-  }, [userId])
-
-  // const getUserbyId = () => {
-  //   setIsLoading(true)
-  //   let query = {
-  //     id: userId,
-  //   }
-
-  //   // getbyidApi(query)
-  //   //   .then((response) => {
-  //   //     setPermissions(response?.role?.permissions?.pages)
-  //   //     setIsLoading(false)
-  //   //   })
-  //   //   .catch(({ error }) => {
-  //   //     console.log('error', error)
-  //   //     setIsLoading(false)
-  //   //   })
-  // }
-
-  // const filteredNavLinks = navLinks.filter((navLink) => {
-  //   const permission = permissions.find((p) => p.key === navLink.privilegesName)
-  //   return permission && permission.allow
-  // })
-
-  const filteredNavLinks = navLinks.filter((navLink) => {
-    // Include "Logout" only on smaller screens
-    if (navLink.label === 'Logout' && isSmallScreen) {
-      return isSmallScreen
-    }
-    const permission = permissions.find((p) => p.key === navLink.privilegesName)
-    return permission && permission.allow
-  })
 
   // if (isLoading) {
   //   return (
@@ -288,8 +250,20 @@ function SidebarMenuComp({
                 />
               </LogoWrapper>
               <Menu>
-                {navLinks
+                {/* {navLinks
                   // .filter(({ label }) => label !== 'Logout')
+                  .map(({ to, label, iconName, disable }, index) => { */}
+                {navLinks
+                  .filter((link) => {
+                    if (userRole === "agent") {
+                      return (
+                        link.privilegesName === "task_list" ||
+                        link.privilegesName === "ongoing_task" ||
+                        link.privilegesName === "logout"
+                      );
+                    }
+                    return true; // Show all links for other roles
+                  })
                   .map(({ to, label, iconName, disable }, index) => {
                     const isActive = location.pathname.startsWith(to);
                     const iconColor = disable

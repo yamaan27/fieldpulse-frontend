@@ -84,7 +84,7 @@ export const addQuery = (dataObject, apiObject) => {
     "search",
     "page",
     "pageSize",
-    "sendClient",
+    "filter",
     "sendInternal",
     "submit",
     "sort",

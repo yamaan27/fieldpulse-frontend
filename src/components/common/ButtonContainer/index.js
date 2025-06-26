@@ -47,19 +47,19 @@ export const ButtonContainer = ({
             style={{
               fontWeight: 700,
               textTransform: 'none',
-              color: labelLeft === 'Delete' ? '#EB5757' : '', // Apply color only for 'Delete'
-              borderColor: labelLeft === 'Delete' ? '#EB5757' : '',
+              color: labelLeft === 'Reject' ? '#EB5757' : '', // Apply color only for 'Reject'
+              borderColor: labelLeft === 'Reject' ? '#EB5757' : '',
             }}
             variant={leftVariant ? leftVariant : 'outlined'}
             size={size ? size : isMobile ? 'medium' : 'large'}
             // color="secondary"
-            color={labelLeft === 'Delete' ? 'secondary' : 'inherit'}
+            color={labelLeft === 'Reject' ? 'secondary' : 'inherit'}
             startIcon={
               <Icon
                 iconName={iconLeft}
                 // iconColor={color.brandColor.secondary['main']}
                 iconColor={
-                  labelLeft === 'Delete'
+                  labelLeft === 'Reject'
                     ? '#EB5757'
                     : color.brandColor.secondary['main']
                 }
@@ -70,33 +70,35 @@ export const ButtonContainer = ({
           </Button>
         </Box>
       </Grid> */}
-      {leftVariant !== 'hidden' && (
+      {leftVariant !== "hidden" && (
         <Grid item xs="auto">
           <Box sx={{ mr: 1 }}>
             <Button
               onClick={onCancel}
               style={{
                 fontWeight: 700,
-                textTransform: 'none',
-                color: ['Delete', 'Cancel Edit', 'Cancel'].includes(labelLeft)
-                  ? '#EB5757'
-                  : '',
-                borderColor: ['Delete', 'Cancel Edit', 'Cancel'].includes(
+                textTransform: "none",
+                color: ["Reject", "Cancel Edit", "Cancel"].includes(labelLeft)
+                  ? "#EB5757"
+                  : "",
+                borderColor: ["Reject", "Cancel Edit", "Cancel"].includes(
                   labelLeft
                 )
-                  ? '#EB5757'
-                  : '',
+                  ? "#EB5757"
+                  : "",
               }}
-              variant={leftVariant ? leftVariant : 'outlined'}
-              size={size ? size : isMobile ? 'medium' : 'large'}
-              color={labelLeft === 'Delete' ? 'secondary' : 'inherit'}
+              variant={leftVariant ? leftVariant : "outlined"}
+              size={size ? size : isMobile ? "medium" : "large"}
+              color={labelLeft === "Reject" ? "secondary" : "inherit"}
               startIcon={
                 <Icon
                   iconName={iconLeft}
                   iconColor={
-                    ['Delete', 'Cancel Edit', 'Cancel'].includes(labelLeft)
-                      ? '#EB5757'
-                      : color.brandColor.secondary['main']
+                    ["Reject", "Cancel Edit", "Cancel", "Start Task"].includes(
+                      labelLeft
+                    )
+                      ? "#EB5757"
+                      : color.brandColor.secondary["main"]
                   }
                 />
               }
@@ -114,18 +116,18 @@ export const ButtonContainer = ({
             // style={{ fontWeight: 700, textTransform: 'none' }}
             style={{
               fontWeight: 700,
-              textTransform: 'none',
-              color: ['Delete', 'Cancel Edit', 'Cancel'].includes(labelRight)
-                ? '#EB5757'
-                : '',
-              borderColor: ['Delete', 'Cancel Edit', 'Cancel'].includes(
+              textTransform: "none",
+              color: ["Reject", "Cancel Edit", "Cancel"].includes(labelRight)
+                ? "#EB5757"
+                : "",
+              borderColor: ["Reject", "Cancel Edit", "Cancel"].includes(
                 labelRight
               )
-                ? '#EB5757'
-                : '',
+                ? "#EB5757"
+                : "",
             }}
-            variant={rightVariant ? rightVariant : 'contained'}
-            size={size ? size : isMobile ? 'medium' : 'large'}
+            variant={rightVariant ? rightVariant : "contained"}
+            size={size ? size : isMobile ? "medium" : "large"}
             // color="secondary"
             // startIcon={
             //   loading ? (
@@ -135,7 +137,9 @@ export const ButtonContainer = ({
             //   )
             // }
             startIcon={
-              !['Delete', 'Cancel Edit', 'Cancel'].includes(labelRight) ? (
+              ["Reject", "Cancel Edit", "Cancel", "Start Task"].includes(
+                labelRight
+              ) ? (
                 loading ? (
                   <CircularProgress size={18} />
                 ) : (
@@ -152,7 +156,7 @@ export const ButtonContainer = ({
         </Box>
       </Grid>
     </GridButtonWrap>
-  )
+  );
 }
 
 ButtonContainer.propTypes = {

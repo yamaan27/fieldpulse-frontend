@@ -2,13 +2,13 @@ import { taskApiVariables } from 'services/apiVariable/taskApiVariables'
 import { addQuery } from 'services/helperFunctions'
 import { toast } from 'react-toastify'
 
-export const getAllMeetingsApi =
+export const getAllTaskApi =
   (query) =>
   (dispatch, getState, { api }) => {
-    addQuery(query, taskApiVariables.getAllMeetings)
+    addQuery(query, taskApiVariables.getAllTasks)
     return new Promise((resolve, reject) => {
       api({
-        ...taskApiVariables.getAllMeetings,
+        ...taskApiVariables.getAllTasks,
       })
         .then((data ) => {
           resolve(data)
@@ -42,14 +42,37 @@ export const getAllMeetingsApi =
           });
       });
     };
+  export const updateTaskApi =
+    (query, body) =>
+    (dispatch, getState, { api }) => {
+      addQuery(query, taskApiVariables.updateTaskUrl);
 
-export const getMeetingbyidApi =
+      taskApiVariables.updateTaskUrl.id = query.id;
+      return new Promise((resolve, reject) => {
+        api({
+          ...taskApiVariables.updateTaskUrl,
+          body,
+        })
+          .then((data, message) => {
+            resolve(data);
+            toast.success(data.message);
+          })
+          .catch((error) => {
+            console.error("[addTaskApi] API error:", error);
+            const errMsg = error?.message || "Something went wrong";
+            reject(errMsg);
+            toast.error(errMsg);
+          });
+      });
+    };
+
+export const getTaskbyidApi =
   (query) =>
   (dispatch, getState, { api }) => {
-    taskApiVariables.getMeetingbyidUrl.id = query.id
+    taskApiVariables.getTaskbyidUrl.id = query.id
     return new Promise((resolve, reject) => {
       api({
-        ...taskApiVariables.getMeetingbyidUrl,
+        ...taskApiVariables.getTaskbyidUrl,
       })
         .then((data ) => {
           resolve(data)
@@ -59,6 +82,60 @@ export const getMeetingbyidApi =
         })
     })
   }
+// export const getTaskbyUseridApi =
+//   (query) =>
+//   (dispatch, getState, { api }) => {
+//     // taskApiVariables.getTaskbyUseridUrl.id = query.id;
+//     addQuery(query, taskApiVariables.getTaskbyUseridUrl);
+//     return new Promise((resolve, reject) => {
+//       api({
+//         ...taskApiVariables.getTaskbyUseridUrl,
+//       })
+//         .then((data) => {
+//           resolve(data);
+//         })
+//         .catch(({ message }) => {
+//           reject(toast.error(message));
+//         });
+//     })
+//   }
+
+export const getTaskbyUseridApi =
+  (query) =>
+  (dispatch, getState, { api }) => {
+    console.log("🔍 Incoming query to getTaskbyUseridApi:", query);
+
+    // ✅ Set the ID
+    taskApiVariables.getTaskbyUseridUrl.id = query.id;
+
+    const { id, ...queryWithoutId } = query;
+
+    console.log(
+      "🧹 Query without ID (to be passed to addQuery):",
+      queryWithoutId
+    );
+
+    // ✅ Add query string values
+    addQuery(queryWithoutId, taskApiVariables.getTaskbyUseridUrl);
+
+    console.log("🌐 Final API object before request:", {
+      ...taskApiVariables.getTaskbyUseridUrl,
+      fullURL: taskApiVariables.getTaskbyUseridUrl.api, // debug final URL
+    });
+
+    return new Promise((resolve, reject) => {
+      api({
+        ...taskApiVariables.getTaskbyUseridUrl,
+      })
+        .then((data) => {
+          resolve(data);
+        })
+        .catch(({ message }) => {
+          reject(toast.error(message));
+        });
+    });
+  };
+
 
 export const getStakeholdersApi =
   (query) =>
@@ -132,13 +209,13 @@ export const uploadImg =
     })
   }
 
-export const editMeetingApi =
+export const editTaskApi =
   (query, body) =>
   (dispatch, getState, { api }) => {
-    addQuery(query, taskApiVariables.editMeeting)
+    addQuery(query, taskApiVariables.editTask)
     return new Promise((resolve, reject) => {
       api({
-        ...taskApiVariables.editMeeting,
+        ...taskApiVariables.editTask,
         body,
       })
         .then(({ data, message }) => {

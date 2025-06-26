@@ -28,7 +28,7 @@ import { clientMeetHeader } from 'services/helpers/constants/admin/meetingLog'
 import { endPoints } from 'services/helpers/config'
 import { color } from 'services/colors'
 
-import { getAllMeetingsApi } from 'action/MeetingLog/MeetingLogAct'
+import { getAllTaskApi } from 'action/Task/TaskAct'
 
 import { ReactComponent as DoubleUpArrowIcon } from 'assets/svg/double_up_arrow.svg'
 import { ReactComponent as DoubleDownArrowIcon } from 'assets/svg//double_down_arrow.svg'
@@ -110,9 +110,9 @@ const MeetTableComp = (props) => {
       query.search = debouncedSearchValue
     }
     props
-      .getAllMeetingsApi(query)
+      .getAllTaskApi(query)
       .then((res) => {
-        console.log("getAllMeetingsApi res", res);
+        console.log("getAllTaskApi res", res);
         setMeetingList(res || [])
 
         setCount(res?.totalUsers)
@@ -338,6 +338,7 @@ const MeetTableComp = (props) => {
               (
                 {
                   _id,
+                  taskId,
                   title,
                   assignedTo,
                   location,
@@ -361,8 +362,8 @@ const MeetTableComp = (props) => {
                         minWidth: "180px",
                       }}
                     >
-                      <LinkWrap onClick={() => goToDetailPage(_id)}>
-                        {_id}
+                      <LinkWrap onClick={() => goToDetailPage(taskId)}>
+                        {taskId}
                       </LinkWrap>
                     </TableCell>
                     <TableCell
@@ -503,11 +504,11 @@ const MeetTableComp = (props) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getAllMeetingsApi }, dispatch)
+  return bindActionCreators({ getAllTaskApi }, dispatch)
 }
 
 MeetTableComp.propTypes = {
-  getAllMeetingsApi: PropTypes.func.isRequired,
+  getAllTaskApi: PropTypes.func.isRequired,
   searchValue: PropTypes.string,
   setSearchValue: PropTypes.any,
 }

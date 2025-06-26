@@ -8,8 +8,14 @@ const DashboardPage = lazy(
 const LiveMapPage = lazy(() => import("../pages/admin/liveMap/liveMapPage"));
 // const LiveMapPage = lazy(() => import("../pages/admin/liveMap/LiveMapPage"));
 
-const AccountMasterPage = lazy(
-  () => import("../pages/admin/Account/AccountMasterPage")
+const TaskListPage = lazy(
+  () => import("../pages/admin/TaskList/TaskListPage")
+);
+const OngoingTaskPage = lazy(
+  () => import("../pages/admin/OngoingTask/OngoingTaskPage")
+);
+const OngoingTaskDetailsPage = lazy(
+  () => import("../pages/admin/OngoingTask/OngoingTaskDetailsPage")
 );
 const UserManagementPage = lazy(
   () => import("../pages/admin/UserManagement/UserManagementPage")
@@ -19,6 +25,9 @@ const UserManagementForm = lazy(
 );
 const UserManagementDetailPage = lazy(
   () => import("../pages/admin/UserManagement/UserDetailsPage")
+);
+const TaskDetailsPage = lazy(
+  () => import("../pages/admin/TaskList/TaskDetailsPage")
 );
 const MeetingLogPage = lazy(
   () => import("../pages/admin/MeetingLog/MeetingLogPage")
@@ -116,18 +125,44 @@ const protectedRoutes = [
         path: "",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <AccountMasterPage />
+            <TaskListPage />
           </Suspense>
         ),
       },
-      // {
-      //   path: "detail/:id",
-      //   element: (
-      //     <Suspense fallback={<div>Loading...</div>}>
-      //       <AccountMasterDetailPage />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "details/:id",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <TaskDetailsPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/ongoing_task",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DashboardLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <OngoingTaskPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "details/:id",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <OngoingTaskDetailsPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {

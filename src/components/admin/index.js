@@ -1,8 +1,11 @@
 export { Dashboard } from "./dashboard";
 export { TaskList } from "./taskList";
+export { OngoingTask } from "./ongoingTask";
 export { UserManagement } from "./userManagement";
 export { UserManagementForm } from "./userManagementForm";
 export { UserManagementDetails } from "./userManagementDetails";
+export { TaskDetails } from "./taskDetails";
+export { OngoingTaskDetails } from "./ongoingTaskDetails";
 export { MeetingLog } from "./meetingLog/index";
 export { AddMeeting } from "./meetingLog/addMeeting";
 export { MeetingDetail } from "./meetingLog/meetingDetail";
