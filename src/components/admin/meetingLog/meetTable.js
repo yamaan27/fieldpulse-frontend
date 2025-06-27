@@ -375,7 +375,7 @@ const MeetTableComp = (props) => {
                       <LocationWrap>{title}</LocationWrap>
                     </TableCell>
                     <TableCell align={"left"}>
-                      <LocationWrap>{assignedTo.name}</LocationWrap>
+                      <LocationWrap>{assignedTo?.name}</LocationWrap>
                     </TableCell>
                     <TableCell
                       align={"left"}
