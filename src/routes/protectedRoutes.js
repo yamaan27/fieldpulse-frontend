@@ -33,14 +33,14 @@ const UserManagementDetailPage = lazy(
 const TaskDetailsPage = lazy(
   () => import("../pages/admin/TaskList/TaskDetailsPage")
 );
-const MeetingLogPage = lazy(
-  () => import("../pages/admin/MeetingLog/MeetingLogPage")
+const CreateTaskPage = lazy(
+  () => import("../pages/admin/CreateTask/CreateTaskPage")
 );
-const AddMeetingPage = lazy(
-  () => import("../pages/admin/MeetingLog/AddMeetingPage")
+const AddTaskPage = lazy(
+  () => import("../pages/admin/CreateTask/AddTaskPage")
 );
-const MeetingDetailPage = lazy(
-  () => import("../pages/admin/MeetingLog/MeetingDetail")
+const TaskDetailPage = lazy(
+  () => import("../pages/admin/CreateTask/TaskDetail")
 );
 const ProjectInsightsPage = lazy(
   () => import("../pages/admin/ProjectInsights/ProjectInsightsPage")
@@ -113,7 +113,7 @@ const protectedRoutes = [
         path: "",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <MeetingLogPage />
+            <CreateTaskPage />
           </Suspense>
         ),
       },
@@ -121,7 +121,7 @@ const protectedRoutes = [
         path: "form",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <AddMeetingPage />
+            <AddTaskPage />
           </Suspense>
         ),
       },
@@ -129,7 +129,7 @@ const protectedRoutes = [
         path: "details/:id",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <MeetingDetailPage />
+            <TaskDetailPage />
           </Suspense>
         ),
       },

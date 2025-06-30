@@ -28,7 +28,7 @@ import { color } from 'services/colors'
 import { getUserEmail } from 'utils/authUtils'
 
 
-import { MeetingInformation } from '../meetingInformation'
+import { TaskInformation } from '../taskInformation'
 
 import { addTaskApi } from 'action/Task/TaskAct'
 
@@ -125,7 +125,7 @@ const HighlightWrap = styled(Box)`
   }
 `
 
-const AddMeetingComp = (props) => {
+const AddTaskComp = (props) => {
   const [values, setValues] = useState({})
   const [errors, setErrors] = useState({})
   const [userEmail, setUserEmail] = useState(null)
@@ -234,7 +234,7 @@ const AddMeetingComp = (props) => {
                 </Grid>
               </Grid>
             </HeaderWrap>
-            <MeetingInformation
+            <TaskInformation
               errors={errors}
               values={values}
               validator={validator}
@@ -320,10 +320,10 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ addTaskApi }, dispatch)
 }
 
-AddMeetingComp.propTypes = {
+AddTaskComp.propTypes = {
   addTaskApi: PropTypes.func.isRequired,
 }
 
-AddMeetingComp.defaultProps = {}
+AddTaskComp.defaultProps = {}
 
-export const AddMeeting = connect(null, mapDispatchToProps)(AddMeetingComp)
+export const AddTask = connect(null, mapDispatchToProps)(AddTaskComp)

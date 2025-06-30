@@ -32,7 +32,7 @@ import {
 import moment from 'moment'
 
 
-import { MeetingInformation } from '../meetingInformation'
+import { TaskInformation } from '../taskInformation'
 import {
   editTaskApi,
   getTaskbyidApi,
@@ -151,7 +151,7 @@ const StyledButtonWhite = styled(Button)({
   },
 })
 
-const MeetingDetailComp = (props) => {
+const TaskDetailComp = (props) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [isEditMode, setIsEditMode] = useState(false)
@@ -356,7 +356,7 @@ const MeetingDetailComp = (props) => {
                 </Grid>
               </Grid>
             </HeaderWrap>
-            <MeetingInformation
+            <TaskInformation
               ClientInfo={meetingData}
               errors={errors}
               values={values}
@@ -494,14 +494,14 @@ const mapDispatchToProps = (dispatch) => {
   )
 }
 
-MeetingDetailComp.propTypes = {
+TaskDetailComp.propTypes = {
   getTaskbyidApi: PropTypes.func.isRequired,
   editTaskApi: PropTypes.func.isRequired,
 }
 
-MeetingDetailComp.defaultProps = {}
+TaskDetailComp.defaultProps = {}
 
-export const MeetingDetail = connect(
+export const TaskDetail = connect(
   null,
   mapDispatchToProps
-)(MeetingDetailComp)
+)(TaskDetailComp)

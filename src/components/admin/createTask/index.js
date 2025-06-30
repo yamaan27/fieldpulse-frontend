@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux'
 import React from 'react'
 import AddchartIcon from '@mui/icons-material/Addchart'
 import TitleWrapper from 'components/common/TitleWrapper'
-import { MeetTable } from './meetTable'
+import { TaskTable } from './taskTable'
 
 const LogMeetingButton = styled("button")({
   backgroundColor: "#324559",
@@ -62,7 +62,7 @@ const FixedButtonWrapper = styled(Box)`
   }
 `
 
-const MeetingLogComp = () => {
+const CreateTaskComp = () => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState('1')
   const [searchValue, setSearchValue] = useState('')
@@ -84,7 +84,7 @@ const MeetingLogComp = () => {
             searchValue={searchValue}
             setSearchValue={setSearchValue}
           />
-          <MeetTable
+          <TaskTable
             searchValue={searchValue}
             setSearchValue={setSearchValue}
           />
@@ -94,7 +94,7 @@ const MeetingLogComp = () => {
       <FixedButtonWrapper>
         <LogMeetingButton onClick={handleLogMeet}>
           <AddchartIcon />
-          Log Meeting
+          Create Task
         </LogMeetingButton>
       </FixedButtonWrapper>
     </>
@@ -105,8 +105,8 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({}, dispatch)
 }
 
-MeetingLogComp.propTypes = {}
+CreateTaskComp.propTypes = {}
 
-MeetingLogComp.defaultProps = {}
+CreateTaskComp.defaultProps = {}
 
-export const MeetingLog = connect(null, mapDispatchToProps)(MeetingLogComp)
+export const CreateTask = connect(null, mapDispatchToProps)(CreateTaskComp)

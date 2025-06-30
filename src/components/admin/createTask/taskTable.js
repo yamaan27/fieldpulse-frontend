@@ -80,7 +80,7 @@ const BoxWrap = styled(Box)`
   width: max-content;
 `
 
-const MeetTableComp = (props) => {
+const TaskTableComp = (props) => {
   const navigate = useNavigate()
   let { CENTER, POINTER } = endPoints.common
   const [page, setPage] = useState(1)
@@ -507,12 +507,12 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ getAllTaskApi }, dispatch)
 }
 
-MeetTableComp.propTypes = {
+TaskTableComp.propTypes = {
   getAllTaskApi: PropTypes.func.isRequired,
   searchValue: PropTypes.string,
   setSearchValue: PropTypes.any,
 }
 
-MeetTableComp.defaultProps = {}
+TaskTableComp.defaultProps = {}
 
-export const MeetTable = connect(null, mapDispatchToProps)(MeetTableComp)
+export const TaskTable = connect(null, mapDispatchToProps)(TaskTableComp)

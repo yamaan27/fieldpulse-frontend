@@ -99,7 +99,7 @@ const StyledTextField = styled(NormalInput)`
   }
 `;
 
-const MeetingInformationComp = ({
+const TaskInformationComp = ({
   errors,
   getAgentsApi,
   values,
@@ -199,7 +199,7 @@ const MeetingInformationComp = ({
     }));
   };
 
-  console.log("MeetingInformationComp values:", values);
+  console.log("TaskInformationComp values:", values);
 
   const handleDateChange = (newValue, fieldName) => {
     const formattedDate = moment(newValue).format("YYYY-MM-DD HH:mm:ss");
@@ -587,7 +587,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ getAgentsApi }, dispatch);
 };
 
-MeetingInformationComp.propTypes = {
+TaskInformationComp.propTypes = {
   validator: PropTypes.object,
   geographyOptions: PropTypes.array,
   setSearch: PropTypes.func.isRequired,
@@ -621,9 +621,9 @@ MeetingInformationComp.propTypes = {
   isEditMode: PropTypes.bool,
 };
 
-MeetingInformationComp.defaultProps = {};
+TaskInformationComp.defaultProps = {};
 
-export const MeetingInformation = connect(
+export const TaskInformation = connect(
   null,
   mapDispatchToProps
-)(MeetingInformationComp);
+)(TaskInformationComp);
